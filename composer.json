@@ -1,0 +1,17 @@
+{
+    "name": "ylly/ylly_certisign_php",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Mickaël BLONDEAU",
+            "email": "mickael@ylly.fr"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Ylly\\CertiSign\\": "/" }
+    },
+    "require": {
+        "php": ">=5.4",
+        "sensio/buzz-bundle": "^1.1"
+    }
+}
