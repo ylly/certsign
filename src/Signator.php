@@ -22,10 +22,15 @@ class Signator
         $this->domain = $domain;
     }
 
-    public static function createFromYaml($pathToFile)
+    public static function createFromYaml($config)
+    {
+        return new Signator($config['env'], $config['cert'], $config['cert_password'], $config['api_key'], $config['api_endpoint']);
+    }
+
+    public static function createFromYamlFile($pathToFile)
     {
         $config = Configurator::loadFromFile($pathToFile);
-        return new Signator($config['env'], $config['cert'], $config['cert_password'], $config['api_key'], $config['api_endpoint']);
+        return self::createFromYaml($config);
     }
 
     public function sendAuthentificationRequest($number)

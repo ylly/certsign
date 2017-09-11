@@ -12,7 +12,7 @@ class SignatorTest extends \PHPUnit\Framework\TestCase
 
     public static function setUpBeforeClass()
     {
-        self::$signator = Signator::createFromYaml(__DIR__ . '/config.yml');
+        self::$signator = Signator::createFromYamlFile(__DIR__ . '/config.yml');
     }
 
     public function testSendSMS()
