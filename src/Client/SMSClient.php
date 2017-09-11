@@ -1,6 +1,6 @@
 <?php
 
-namespace Ylly\CertiSign\Client;
+namespace YllyCertiSign\Client;
 
 class SMSClient
 {

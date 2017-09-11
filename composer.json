@@ -7,11 +7,14 @@
             "email": "mickael@ylly.fr"
         }
     ],
-    "autoload": {
-        "psr-4": { "Ylly\\CertiSign\\": "/" }
-    },
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4",
         "sensio/buzz-bundle": "^1.1"
+    },
+    "autoload": {
+        "psr-0": {
+            "YllyCertiSign": "src/"
+        }
     }
 }

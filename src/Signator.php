@@ -1,12 +1,12 @@
 <?php
 
-namespace Ylly\CertiSign;
+namespace YllyCertiSign;
 
-use Ylly\CertiSign\Client\SignClient;
-use Ylly\CertiSign\Client\SMSClient;
-use Ylly\CertiSign\Data\Document;
-use Ylly\CertiSign\Data\Request;
-use Ylly\CertiSign\Data\Signature;
+use YllyCertiSign\Client\SignClient;
+use YllyCertiSign\Client\SMSClient;
+use YllyCertiSign\Data\Document;
+use YllyCertiSign\Data\Request;
+use YllyCertiSign\Data\Signature;
 
 class Signator
 {

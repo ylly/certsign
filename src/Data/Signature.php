@@ -1,6 +1,6 @@
 <?php
 
-namespace Ylly\CertiSign\Data;
+namespace YllyCertiSign\Data;
 
 class Signature
 {
