@@ -1,31 +1,28 @@
 <?php
 
+use YllyCertiSign\Configurator;
 use YllyCertiSign\Data\Request;
 use YllyCertiSign\Data\Signature;
 use YllyCertiSign\Signator;
 
 class SignatorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var array */
-    private static $config;
-
     /** @var Signator */
     private static $signator;
 
     public static function setUpBeforeClass()
     {
-        $configFile = file_get_contents(__DIR__ . '/config.yml');
-        $loader = new \Symfony\Component\Yaml\Yaml();
-        self::$config = $loader->parse($configFile);
-        self::$signator = new Signator(self::$config['env'], self::$config['cert'], self::$config['cert_password'], self::$config['api_key'], self::$config['api_endpoint']);
+        self::$signator = Signator::createFromYaml(__DIR__ . '/config.yml');
     }
 
     public function testSendSMS()
     {
-        $sent = self::$signator->sendAuthentificationRequest(self::$config['sms_destination']);
+        $config = Configurator::loadFromFile(__DIR__ . '/config.yml');
+
+        $sent = self::$signator->sendAuthentificationRequest($config['sms_destination']);
         $this->assertTrue($sent);
 
-        $validated = self::$signator->checkAuthentificationRequest(self::$config['sms_destination'], '000000');
+        $validated = self::$signator->checkAuthentificationRequest($config['sms_destination'], '000000');
         $this->assertFalse($validated);
     }
 

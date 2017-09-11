@@ -2,6 +2,7 @@
 
 namespace YllyCertiSign;
 
+use Symfony\Component\Yaml\Yaml;
 use YllyCertiSign\Client\SignClient;
 use YllyCertiSign\Client\SMSClient;
 use YllyCertiSign\Data\Document;
@@ -19,6 +20,12 @@ class Signator
         $this->signClient = new SignClient($environnement, $certPath, $certPassword);
         $this->smsClient = new SMSClient($environnement, $apiKey);
         $this->domain = $domain;
+    }
+
+    public static function createFromYaml($pathToFile)
+    {
+        $config = Configurator::loadFromFile($pathToFile);
+        return new Signator($config['env'], $config['cert'], $config['cert_password'], $config['api_key'], $config['api_endpoint']);
     }
 
     public function sendAuthentificationRequest($number)
