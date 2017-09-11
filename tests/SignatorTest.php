@@ -19,10 +19,10 @@ class SignatorTest extends \PHPUnit\Framework\TestCase
     {
         $config = Configurator::loadFromFile(__DIR__ . '/config.yml');
 
-        $sent = self::$signator->sendAuthentificationRequest($config['sms_destination']);
+        $sent = self::$signator->sendAuthenticationRequest($config['sms_destination']);
         $this->assertTrue($sent);
 
-        $validated = self::$signator->checkAuthentificationRequest($config['sms_destination'], '000000');
+        $validated = self::$signator->checkAuthenticationRequest($config['sms_destination'], '000000');
         $this->assertFalse($validated);
     }
 

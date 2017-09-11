@@ -2,7 +2,6 @@
 
 namespace YllyCertiSign;
 
-use Symfony\Component\Yaml\Yaml;
 use YllyCertiSign\Client\SignClient;
 use YllyCertiSign\Client\SMSClient;
 use YllyCertiSign\Data\Document;
@@ -33,7 +32,7 @@ class Signator
         return self::createFromYaml($config);
     }
 
-    public function sendAuthentificationRequest($number)
+    public function sendAuthenticationRequest($number)
     {
         $response = $this->smsClient->call('AddAcces', [
             'indicatifRegional' => '33',
@@ -45,7 +44,7 @@ class Signator
         return isset($response->error) && $response->error == 0;
     }
 
-    public function checkAuthentificationRequest($number, $code)
+    public function checkAuthenticationRequest($number, $code)
     {
         $response = $this->smsClient->call('CheckAcces', [
             'indicatifRegional' => '33',

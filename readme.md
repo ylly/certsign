@@ -9,9 +9,9 @@ $signator = Signator::createFromYamlFile('/path/to/config.yml');
 // OR
 $signator = Signator::createFromYaml($yamlObject);
 
-$smsSent = $signator->sendAuthentificationRequest('0601020304');
+$smsSent = $signator->sendAuthenticationRequest('0601020304');
 
-$validated = $signator->checkAuthentificationRequest('0601020304', '123456');
+$validated = $signator->checkAuthenticationRequest('0601020304', '123456');
 
 $request = Request::create()
     ->addHolder('Firstname', 'Lastname', 'certisign@ylly.fr', '0601020304')
