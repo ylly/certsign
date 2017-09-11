@@ -1,2 +1,3 @@
-/vendor/
 /.idea
+/vendor/
+/tests/config.yml

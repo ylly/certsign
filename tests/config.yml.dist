@@ -1,0 +1,6 @@
+env: test
+cert: /etc/ssl/certisign.pem
+cert_password: password
+api_key: 123456
+api_endpoint: https://www.ylly.fr
+sms_destination: '0601020304'
