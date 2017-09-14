@@ -13,7 +13,12 @@ class Signature
 
     public function __construct($imagePath, $text, $posX = 10, $posY = 10, $size = 10, $color = 8888)
     {
-        $this->image = Document::getDocumentData($imagePath);
+        if (file_exists($imagePath)) {
+            $this->image = Document::getDocumentData($imagePath);
+        } else {
+            $this->image = '';
+        }
+
         $this->text = $text;
         $this->posX = $posX;
         $this->posY = $posY;
