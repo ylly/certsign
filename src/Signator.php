@@ -6,7 +6,6 @@ use YllyCertiSign\Client\SignClient;
 use YllyCertiSign\Client\SMSClient;
 use YllyCertiSign\Data\Document;
 use YllyCertiSign\Data\Request;
-use YllyCertiSign\Data\Signature;
 
 class Signator
 {
@@ -55,11 +54,11 @@ class Signator
         return isset($response->error) && $response->error == 0;
     }
 
-    public function signDocuments(Request $request, Signature $signatureInfo)
+    public function signDocuments(Request $request)
     {
         $order = $this->createSignOrder($request);
 
-        $signatures = $this->createSignRequest($request, $signatureInfo, $order->orderRequestId);
+        $signatures = $this->createSignRequest($request, $order->orderRequestId);
 
         $this->signRequest($order->orderRequestId);
 
@@ -81,7 +80,7 @@ class Signator
         return $this->signClient->post('/ephemeral/orders', $signatureOrderData);
     }
 
-    private function createSignRequest(Request $request, Signature $signatureInfo, $orderId)
+    private function createSignRequest(Request $request, $orderId)
     {
         $signData = [];
         foreach($request->documents as $document) {
@@ -94,14 +93,14 @@ class Signator
                     'documentType' => 'INLINE'
                 ],
                 'pdfSignatureOptions' => [
-                    'signatureTextColor' => $signatureInfo->color,
-                    'signatureTextFontSize' => $signatureInfo->size,
+                    'signatureTextColor' => $document->signature->color,
+                    'signatureTextFontSize' => $document->signature->size,
                     'fontFamily' => 'Courier',
                     'fontStyle' => 'Normal',
-                    'signatureImageContent' => $signatureInfo->image,
-                    'signatureText' => $signatureInfo->text,
-                    'signaturePosX' => $signatureInfo->posX,
-                    'signaturePosY' => $signatureInfo->posY,
+                    'signatureImageContent' => $document->signature->image,
+                    'signatureText' => $document->signature->text,
+                    'signaturePosX' => $document->signature->posX,
+                    'signaturePosY' => $document->signature->posY,
                     'signaturePage' => 1
                 ],
                 'toSignContent' => $document->data
@@ -116,6 +115,10 @@ class Signator
         return $this->signClient->post('/ephemeral/signatures/sign?mode=SYNC&orderRequestId=' . $orderId);
     }
 
+    /**
+     * @param $signatures
+     * @return Document[]
+     */
     private function getSignedDocuments($signatures)
     {
         $documents = [];

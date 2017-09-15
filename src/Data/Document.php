@@ -6,11 +6,13 @@ class Document
 {
     public $name;
     public $data;
+    public $signature;
 
-    public function __construct($name, $data, $raw = true)
+    public function __construct($name, $data, Signature $signature = null, $raw = true)
     {
         $this->name = $name;
         $this->data = $data;
+        $this->signature = $signature;
 
         if (!$raw) {
             $this->data = self::getDocumentData($this->data);

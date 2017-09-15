@@ -8,19 +8,28 @@ $signator = new Signator('test', '/path/to/cert.pem', 'cert_password', 'sms_api_
 $signator = Signator::createFromYamlFile('/path/to/config.yml');
 // OR
 $signator = Signator::createFromYaml($yamlObject);
+```
+
+```php
+$signator = Signator::createFromYaml($yamlObject);
 
 $smsSent = $signator->sendAuthenticationRequest('0601020304');
 
 $validated = $signator->checkAuthenticationRequest('0601020304', '123456');
+```
+
+```php
+$signator = Signator::createFromYaml($yamlObject);
+
+$signature = Signature::create()->setImage('/path/to/sign.png', false)->setText('Signature label');
+//$signature = Signature::create()->setImage('BASE64')->setText('Signature label');
 
 $request = Request::create()
     ->addHolder('Firstname', 'Lastname', 'certisign@ylly.fr', '0601020304')
-    ->addDocument('Document-1', '/path/to/doc.pdf', false)
-    ->addDocument('Document-2', '/path/to/doc.pdf', false);
+    ->addDocument('Document-1', '/path/to/doc.pdf', $signature, false)
+    ->addDocument('Document-2', 'BASE64', $signature);
 
-$signInfo = new Signature('/path/to/sign.png', 'Signature label');
-
-$documents = $signator->signDocuments($request, $signInfo);
+$documents = $signator->signDocuments($request);
 ```
 
 ## Configuration file :

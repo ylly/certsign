@@ -20,9 +20,9 @@ class Request
         return new Request();
     }
 
-    public function addDocument($name, $data, $raw = true)
+    public function addDocument($name, $data, Signature $signature = null, $raw = true)
     {
-        $document = new Document($name, $data, $raw);
+        $document = new Document($name, $data, $signature, $raw);
         $this->documents[] = $document;
         return $this;
     }

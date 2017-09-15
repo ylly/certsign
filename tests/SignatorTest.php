@@ -30,14 +30,17 @@ class SignatorTest extends \PHPUnit\Framework\TestCase
     {
         $path = __DIR__ . '/data/';
 
+        $signature = Signature::create()->setImage($path . 'sign.png', false)->setText('Signature');
+
+        $document = $path . 'doc.pdf';
+        $base64 = base64_encode(file_get_contents($document));
+
         $request = Request::create()
             ->addHolder('Firstname', 'Lastname', 'certisign@ylly.fr', '0601020304')
-            ->addDocument('Test-1', $path . 'doc.pdf', false)
-            ->addDocument('Test-2', $path . 'doc.pdf', false);
+            ->addDocument('Test-1', $document, $signature, false)
+            ->addDocument('Test-2', $base64, $signature);
 
-        $signInfo = new Signature($path . 'sign.png', 'Signature');
-
-        $documents = self::$signator->signDocuments($request, $signInfo);
+        $documents = self::$signator->signDocuments($request);
 
         $this->assertEquals(2, count($documents));
     }
