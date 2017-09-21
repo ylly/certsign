@@ -23,7 +23,7 @@ class SMSClient
             throw new \Exception('Environnement not found');
         }
 
-        $options = null;
+        $options = [];
         if ($proxy !== null) {
             $pHost = explode(':', $proxy)[0];
             $pPort = explode(':', $proxy)[0];
