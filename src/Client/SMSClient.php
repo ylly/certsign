@@ -35,17 +35,18 @@ class SMSClient
         $endPoint = $this->endPoints[$this->environnement];
 
         if ($this->proxy !== null) {
+            $context = stream_context_create(['http' => ['proxy' => 'tcp://' . $this->proxy]]);
             $pHost = explode(':', $this->proxy)[0];
             $pPort = explode(':', $this->proxy)[0];
+
             $options = [
                 'proxy_host'     => $pHost,
                 'proxy_port'     => $pPort,
-                'stream_context' => stream_context_create([
-                    'proxy' => "tcp://$pHost:$pPort"
-                ])
+                'stream_context' => $context
             ];
+
             $tmpFile = tempnam(sys_get_temp_dir(), 'ylly_cert_sign');
-            file_put_contents($endPoint, file_get_contents($endPoint));
+            file_put_contents($endPoint, file_get_contents($endPoint, null, $context));
             $endPoint = $tmpFile;
         }
 
