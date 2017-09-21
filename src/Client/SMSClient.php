@@ -35,9 +35,9 @@ class SMSClient
         $endPoint = $this->endPoints[$this->environnement];
 
         if ($this->proxy !== null) {
-            $context = stream_context_create(['http' => ['proxy' => 'tcp://' . $this->proxy]]);
+            $context = stream_context_create(['http' => ['proxy' => 'tcp://' . $this->proxy, 'request_fulluri' => true]]);
             $pHost = explode(':', $this->proxy)[0];
-            $pPort = explode(':', $this->proxy)[0];
+            $pPort = explode(':', $this->proxy)[1];
 
             $options = [
                 'proxy_host'     => $pHost,
@@ -46,7 +46,7 @@ class SMSClient
             ];
 
             $tmpFile = tempnam(sys_get_temp_dir(), 'ylly_cert_sign');
-            file_put_contents($endPoint, file_get_contents($endPoint, null, $context));
+            file_put_contents($tmpFile, file_get_contents($endPoint, null, $context));
             $endPoint = $tmpFile;
         }
 
