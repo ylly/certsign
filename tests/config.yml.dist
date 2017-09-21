@@ -4,3 +4,4 @@ cert_password: password
 api_key: 123456
 api_endpoint: https://www.ylly.fr
 sms_destination: '0601020304'
+#proxy: 1.1.1.1:1111

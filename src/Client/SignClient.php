@@ -16,7 +16,7 @@ class SignClient
         'test' => 'https://sign-sandbox.certeurope.fr/'
     ];
 
-    public function __construct($environnement, $certPath, $certPassword)
+    public function __construct($environnement, $certPath, $certPassword, $proxy)
     {
         $this->environnement = $environnement;
         if (!isset($this->endPoints[$this->environnement])) {
@@ -27,6 +27,12 @@ class SignClient
         $curl->setVerifyPeer(false);
         $curl->setOption(CURLOPT_SSLCERT, $certPath);
         $curl->setOption(CURLOPT_SSLCERTPASSWD, $certPassword);
+
+        if ($proxy !== null) {
+            $curl->setOption(CURLOPT_PROXY, explode(':', $proxy)[0]);
+            $curl->setOption(CURLOPT_PROXYPORT, explode(':', $proxy)[1]);
+        }
+
         $this->client = new Browser($curl);
     }
 

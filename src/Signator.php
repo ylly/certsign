@@ -13,16 +13,23 @@ class Signator
     private $smsClient;
     private $domain;
 
-    public function __construct($environnement, $certPath, $certPassword, $apiKey, $domain)
+    private function __construct($environnement, $certPath, $certPassword, $apiKey, $domain, $proxy)
     {
-        $this->signClient = new SignClient($environnement, $certPath, $certPassword);
-        $this->smsClient = new SMSClient($environnement, $apiKey);
+        $this->signClient = new SignClient($environnement, $certPath, $certPassword, $proxy);
+        $this->smsClient = new SMSClient($environnement, $apiKey, $proxy);
         $this->domain = $domain;
     }
 
     public static function createFromYaml($config)
     {
-        return new Signator($config['env'], $config['cert'], $config['cert_password'], $config['api_key'], $config['api_endpoint']);
+        return new Signator(
+            $config['env'],
+            $config['cert'],
+            $config['cert_password'],
+            $config['api_key'],
+            $config['api_endpoint'],
+            isset($config['proxy']) ? $config['proxy'] : null
+        );
     }
 
     public static function createFromYamlFile($pathToFile)

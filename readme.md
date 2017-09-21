@@ -3,11 +3,8 @@
 ## Usage example :
 
 ```php
-$signator = new Signator('test', '/path/to/cert.pem', 'cert_password', 'sms_api_key', 'sms_return_url');
-// OR
 $signator = Signator::createFromYamlFile('/path/to/config.yml');
-// OR
-$signator = Signator::createFromYaml($yamlObject);
+//$signator = Signator::createFromYaml($yamlObject);
 ```
 
 ```php
