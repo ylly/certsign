@@ -16,6 +16,8 @@ class SMSClient
 
     private $apiKey;
 
+    private $proxy;
+
     public function __construct($environnement, $apiKey, $proxy)
     {
         $this->environnement = $environnement;
@@ -23,10 +25,18 @@ class SMSClient
             throw new \Exception('Environnement not found');
         }
 
+        $this->apiKey = $apiKey;
+        $this->proxy = $proxy;
+    }
+
+    private function createClient()
+    {
         $options = [];
-        if ($proxy !== null) {
-            $pHost = explode(':', $proxy)[0];
-            $pPort = explode(':', $proxy)[0];
+        $endPoint = $this->endPoints[$this->environnement];
+
+        if ($this->proxy !== null) {
+            $pHost = explode(':', $this->proxy)[0];
+            $pPort = explode(':', $this->proxy)[0];
             $options = [
                 'proxy_host'     => $pHost,
                 'proxy_port'     => $pPort,
@@ -34,14 +44,24 @@ class SMSClient
                     'proxy' => "tcp://$pHost:$pPort"
                 ])
             ];
+            $tmpFile = tempnam(sys_get_temp_dir(), 'ylly_cert_sign');
+            file_put_contents($endPoint, file_get_contents($endPoint));
+            $endPoint = $tmpFile;
         }
 
-        $this->client = new \SoapClient($this->endPoints[$this->environnement], $options);
-        $this->apiKey = $apiKey;
+        $this->client = new \SoapClient($endPoint, $options);
+
+        if (isset($tmpFile)) {
+            unlink($tmpFile);
+        }
     }
 
     public function call($method, $args)
     {
+        if (!$this->client instanceof \SoapClient) {
+            $this->createClient();
+        }
+
         $args = array_merge(['codeApplication' => $this->apiKey], $args);
         return $this->client->__call($method, $args);
     }
