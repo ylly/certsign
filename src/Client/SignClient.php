@@ -2,14 +2,15 @@
 
 namespace YllyCertiSign\Client;
 
-use Buzz\Browser;
-use Buzz\Client\Curl;
-
 class SignClient
 {
-    private $client;
-
     private $environnement;
+
+    private $certPath;
+
+    private $certPassword;
+
+    private $proxy;
 
     private $endPoints = [
         'prod' => 'https://sign.certeurope.fr/',
@@ -22,18 +23,9 @@ class SignClient
         if (!isset($this->endPoints[$this->environnement])) {
             throw new \Exception('Environnement not found');
         }
-
-        $curl = new Curl();
-        $curl->setVerifyPeer(false);
-        $curl->setOption(CURLOPT_SSLCERT, $certPath);
-        $curl->setOption(CURLOPT_SSLCERTPASSWD, $certPassword);
-
-        if ($proxy !== null) {
-            $curl->setOption(CURLOPT_PROXY, explode(':', $proxy)[0]);
-            $curl->setOption(CURLOPT_PROXYPORT, explode(':', $proxy)[1]);
-        }
-
-        $this->client = new Browser($curl);
+        $this->certPath = $certPath;
+        $this->certPassword = $certPassword;
+        $this->proxy = $proxy;
     }
 
     private function getEndpoint()
@@ -41,15 +33,43 @@ class SignClient
         return $this->endPoints[$this->environnement];
     }
 
+    private function createRequest($url)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $this->getEndpoint() . $url);
+        curl_setopt($curl, CURLOPT_SSLCERT, $this->certPath);
+        curl_setopt($curl, CURLOPT_SSLCERTPASSWD, $this->certPassword);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        if ($this->proxy !== null) {
+            curl_setopt($curl, CURLOPT_PROXY, explode(':', $this->proxy)[0]);
+            curl_setopt($curl, CURLOPT_PROXYPORT, explode(':', $this->proxy)[1]);
+        }
+
+        return $curl;
+    }
+
     public function get($url)
     {
-        $response = $this->client->get($this->getEndpoint() . $url);
-        return json_decode($response->getContent());
+        $curl = $this->createRequest($url);
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        return json_decode($response);
     }
 
     public function post($url, $content = [])
     {
-        $response = $this->client->post($this->getEndpoint() . $url, ['Content-Type' => 'application/json'], json_encode($content));
-        return json_decode($response->getContent());
+        $data = json_encode($content);
+
+        $curl = $this->createRequest($url);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json', 'Content-Length: ' . strlen($data)]);
+        $response = curl_exec($curl);
+        curl_close($curl);
+
+        return json_decode($response);
     }
 }

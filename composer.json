@@ -10,7 +10,6 @@
     "require": {
         "php": ">=5.4",
         "ext-gd": "*",
-        "sensio/buzz-bundle": "^1.1",
         "symfony/yaml": "~2.2|~3.0"
     },
     "autoload": {
