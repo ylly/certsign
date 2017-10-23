@@ -33,7 +33,7 @@ class SMSClient extends AbstractClient
 
     private function createClient()
     {
-        $options = [];
+        $options = ['trace' => 1];
         $endPoint = $this->endPoints[$this->environnement];
 
         if ($this->proxy !== null) {
@@ -73,6 +73,7 @@ class SMSClient extends AbstractClient
 
             return $response;
         } catch (\SoapFault $e) {
+            $this->writeLog(LogEmitter::INFO, $this->client->__getLastRequest());
             $this->writeLog(LogEmitter::ERROR, $e->getMessage());
 
             throw $e;
