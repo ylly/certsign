@@ -2,7 +2,9 @@
 
 namespace YllyCertiSign\Client;
 
-class SMSClient
+use YllyCertiSign\Log\LogEmitter;
+
+class SMSClient extends AbstractClient
 {
     /** @var \SoapClient */
     private $client;
@@ -64,6 +66,16 @@ class SMSClient
         }
 
         $args = array_merge(['codeApplication' => $this->apiKey], $args);
-        return $this->client->__call($method, $args);
+        try {
+            $response =  $this->client->__call($method, $args);
+            $this->writeLog(LogEmitter::INFO, $this->client->__getLastRequest());
+            $this->writeLog(LogEmitter::INFO, $this->client->__getLastResponse());
+
+            return $response;
+        } catch (\SoapFault $e) {
+            $this->writeLog(LogEmitter::ERROR, $e->getMessage());
+
+            throw $e;
+        }
     }
 }

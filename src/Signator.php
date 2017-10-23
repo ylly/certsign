@@ -6,6 +6,7 @@ use YllyCertiSign\Client\SignClient;
 use YllyCertiSign\Client\SMSClient;
 use YllyCertiSign\Data\Document;
 use YllyCertiSign\Data\Request;
+use YllyCertiSign\Log\LogListenerInterface;
 
 class Signator
 {
@@ -36,6 +37,12 @@ class Signator
     {
         $config = Configurator::loadFromFile($pathToFile);
         return self::createFromYaml($config);
+    }
+
+    public function addListener(LogListenerInterface $listener)
+    {
+        $this->signClient->addListener($listener);
+        $this->smsClient->addListener($listener);
     }
 
     public function sendAuthenticationRequest($number)

@@ -38,3 +38,21 @@ cert_password: password
 api_key: 123456
 api_endpoint: https://www.ylly.fr
 ```
+
+## Advanced usage :
+
+A Log interface is provided to manage outputed logs, you can register your listener on the signator
+
+```php
+class Listener implement LogListenerInterface
+{
+    public function recieve($level, $message)
+    {
+        // do something
+    }
+}
+
+$signator = Signator::createFromYaml($yamlObject);
+
+$signator->addListener(new Listener());
+```
