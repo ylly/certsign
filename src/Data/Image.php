@@ -6,17 +6,34 @@ class Image
 {
     private $image;
 
+    /** @var TextStyle */
+    private $style;
+
+    /** @var int */
+    private $textIndex = 0;
+
     public function __construct($w, $h, $r, $g, $b)
     {
+        $this->setStyle(new TextStyle(0, 0, 7, 15, [0, 0, 0]));
         $this->image = imagecreate($w, $h);
         imagecolorallocate($this->image, $r, $g, $b);
     }
 
-    public function addText($text, $x, $y, $size, $r, $g, $b)
+    public function setStyle(TextStyle $style)
     {
-        $color = imagecolorallocate($this->image, $r, $g, $b);
+        $this->style = $style;
+        $this->textIndex = 0;
+    }
+
+    public function addText($text)
+    {
         $font = __DIR__ . '/../arial.ttf';
-        imagettftext($this->image, $size, 0, $x, $y, $color, $font, $text);
+
+        $x = $this->style->getX();
+        $y = $this->style->getY() + $this->style->getSpacing() * $this->textIndex;
+        ++$this->textIndex;
+
+        imagettftext($this->image, $this->style->getFontSize(), 0, $x, $y, $this->style->getColor($this->image), $font, $text);
     }
 
     public function toBase64()
