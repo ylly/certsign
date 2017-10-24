@@ -67,12 +67,23 @@ class SignClient extends AbstractClient
         $response = curl_exec($curl);
         curl_close($curl);
 
-        $this->writeLog(LogEmitter::INFO, sprintf(
-            'Response : %s',
-            $response
-        ));
+        $this->writeLog(LogEmitter::INFO, sprintf('Response : %s', $this->sanitizeResponse($response)));
 
         return $response;
+    }
+
+    private function sanitizeResponse($response)
+    {
+        $responseObject = json_decode($response);
+
+        $documentsTags = ['toSignContent', 'signedContent'];
+        foreach ($documentsTags as $documentsTag) {
+            if (isset($responseObject->$documentsTag)) {
+                $responseObject->$documentsTag = '...';
+            }
+        }
+
+        return json_encode($responseObject);
     }
 
     public function get($url)
