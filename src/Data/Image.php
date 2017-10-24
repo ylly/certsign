@@ -14,7 +14,7 @@ class Image
 
     public function __construct($w, $h, $r, $g, $b)
     {
-        $this->setStyle(new TextStyle(0, 0, 7, 15, [0, 0, 0]));
+        $this->setStyle(new TextStyle(0, 10, 7, 15, [0, 0, 0]));
         $this->image = imagecreate($w, $h);
         imagecolorallocate($this->image, $r, $g, $b);
     }

@@ -54,7 +54,7 @@ class SignClient extends AbstractClient
         }
 
         $this->writeLog(LogEmitter::INFO, sprintf(
-            '[%s] Request : %s',
+            '[%s] %s',
             $method !== null ? $method : 'GET',
             $this->getEndpoint() . $url
         ));
