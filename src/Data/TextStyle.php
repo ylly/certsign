@@ -4,14 +4,19 @@ namespace YllyCertiSign\Data;
 
 class TextStyle
 {
+    /** @var int */
     private $x;
 
+    /** @var int */
     private $y;
 
+    /** @var int */
     private $fontSize;
 
+    /** @var int */
     private $spacing;
 
+    /** @var Color */
     private $color;
 
     /**
@@ -19,9 +24,9 @@ class TextStyle
      * @param int $y
      * @param int $fontSize
      * @param int $spacing
-     * @param array $color
+     * @param Color $color
      */
-    public function __construct($x, $y, $fontSize, $spacing, array $color)
+    public function __construct($x, $y, $fontSize, $spacing, Color $color)
     {
         $this->x = $x;
         $this->y = $y;
@@ -100,7 +105,7 @@ class TextStyle
      */
     public function getColor($image)
     {
-        return imagecolorallocate($image, $this->color[0], $this->color[1], $this->color[2]);
+        return imagecolorallocate($image, $this->color->red, $this->color->green, $this->color->blue);
     }
 
     /**

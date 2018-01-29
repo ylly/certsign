@@ -4,22 +4,33 @@ namespace YllyCertiSign\Data;
 
 class Signature
 {
+    /** @var string */
     public $image;
-    public $text;
-    public $posX;
-    public $posY;
-    public $size;
-    public $color;
 
-    public function __construct($posX = 10, $posY = 10, $size = 10, $color = 8888)
+    /** @var int */
+    public $posX;
+
+    /** @var int */
+    public $posY;
+
+    /** @var int */
+    public $page;
+
+    /**
+     * @param int $posX
+     * @param int $posY
+     * @param int $page
+     */
+    public function __construct($posX = 10, $posY = 10, $page = 1)
     {
-        $this->text = '';
         $this->posX = $posX;
         $this->posY = $posY;
-        $this->size = $size;
-        $this->color = $color;
+        $this->page = $page;
     }
 
+    /**
+     * @return Signature
+     */
     public static function create()
     {
         return new Signature();
@@ -41,12 +52,6 @@ class Signature
                 $this->image = Document::getDocumentData($image);
             }
         }
-        return $this;
-    }
-
-    public function setText($text)
-    {
-        $this->text = $text;
         return $this;
     }
 }

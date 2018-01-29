@@ -2,49 +2,48 @@
 
 namespace YllyCertiSign;
 
-use YllyCertiSign\Client\SignClient;
-use YllyCertiSign\Client\SMSClient;
+use YllyCertiSign\Client\Sign\SignClientInterface;
+use YllyCertiSign\Client\SMS\SMSClientInterface;
 use YllyCertiSign\Data\Document;
 use YllyCertiSign\Data\Request;
 use YllyCertiSign\Log\LogListenerInterface;
 
 class Signator
 {
+    /** @var SignClientInterface */
     private $signClient;
+
+    /** @var SMSClientInterface */
     private $smsClient;
+
+    /** @var string */
     private $domain;
 
-    private function __construct($environnement, $certPath, $certPassword, $apiKey, $domain, $proxy)
+    /**
+     * @param SignClientInterface $signClient
+     * @param SMSClientInterface $smsClient
+     * @param string $domain
+     */
+    public function __construct(SignClientInterface $signClient, SMSClientInterface $smsClient, $domain)
     {
-        $this->signClient = new SignClient($environnement, $certPath, $certPassword, $proxy);
-        $this->smsClient = new SMSClient($environnement, $apiKey, $proxy);
+        $this->signClient = $signClient;
+        $this->smsClient = $smsClient;
         $this->domain = $domain;
     }
 
-    public static function createFromYaml($config)
-    {
-        return new Signator(
-            $config['env'],
-            $config['cert'],
-            $config['cert_password'],
-            $config['api_key'],
-            $config['api_endpoint'],
-            isset($config['proxy']) ? $config['proxy'] : null
-        );
-    }
-
-    public static function createFromYamlFile($pathToFile)
-    {
-        $config = Configurator::loadFromFile($pathToFile);
-        return self::createFromYaml($config);
-    }
-
+    /**
+     * @param LogListenerInterface $listener
+     */
     public function addListener(LogListenerInterface $listener)
     {
         $this->signClient->addListener($listener);
         $this->smsClient->addListener($listener);
     }
 
+    /**
+     * @param string $number
+     * @return bool
+     */
     public function sendAuthenticationRequest($number)
     {
         $response = $this->smsClient->call('AddAcces', [
@@ -57,6 +56,11 @@ class Signator
         return isset($response->error) && $response->error == 0;
     }
 
+    /**
+     * @param string $number
+     * @param string $code
+     * @return bool
+     */
     public function checkAuthenticationRequest($number, $code)
     {
         $response = $this->smsClient->call('CheckAcces', [
@@ -68,6 +72,10 @@ class Signator
         return isset($response->error) && $response->error == 0;
     }
 
+    /**
+     * @param Request $request
+     * @return Data\Document[]
+     */
     public function signDocuments(Request $request)
     {
         $order = $this->createSignOrder($request);
@@ -79,6 +87,10 @@ class Signator
         return $this->getSignedDocuments($signatures);
     }
 
+    /**
+     * @param Request $request
+     * @return object|array
+     */
     private function createSignOrder(Request $request)
     {
         $signatureOrderData = [
@@ -87,13 +99,18 @@ class Signator
                 'lastname' => $request->holder->lastname,
                 'email' => $request->holder->email,
                 'mobile' => $request->holder->mobile,
-                'country' => 'FR'
+                'country' => $request->holder->country
             ]
         ];
 
         return $this->signClient->post('/ephemeral/orders', $signatureOrderData);
     }
 
+    /**
+     * @param Request $request
+     * @param int $orderId
+     * @return object|array
+     */
     private function createSignRequest(Request $request, $orderId)
     {
         $signData = [];
@@ -107,15 +124,15 @@ class Signator
                     'documentType' => 'INLINE'
                 ],
                 'pdfSignatureOptions' => [
-                    'signatureTextColor' => $document->signature->color,
-                    'signatureTextFontSize' => $document->signature->size,
+                    'signatureTextColor' => '0000',
+                    'signatureTextFontSize' => '10',
                     'fontFamily' => 'Courier',
                     'fontStyle' => 'Normal',
+                    'signatureText' => '',
                     'signatureImageContent' => $document->signature->image,
-                    'signatureText' => $document->signature->text,
                     'signaturePosX' => $document->signature->posX,
                     'signaturePosY' => $document->signature->posY,
-                    'signaturePage' => 1
+                    'signaturePage' => $document->signature->page
                 ],
                 'toSignContent' => $document->data
             ];
@@ -124,6 +141,10 @@ class Signator
         return $this->signClient->post('/ephemeral/signatures?orderRequestId=' . $orderId, $signData);
     }
 
+    /**
+     * @param int $orderId
+     * @return object|array
+     */
     private function signRequest($orderId)
     {
         return $this->signClient->post('/ephemeral/signatures/sign?mode=SYNC&orderRequestId=' . $orderId);

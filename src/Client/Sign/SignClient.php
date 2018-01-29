@@ -1,10 +1,10 @@
 <?php
 
-namespace YllyCertiSign\Client;
+namespace YllyCertiSign\Client\Sign;
 
-use YllyCertiSign\Log\LogEmitter;
+use YllyCertiSign\Client\AbstractClient;
 
-class SignClient extends AbstractClient
+class SignClient extends AbstractClient implements SignClientInterface
 {
     private $environnement;
 
@@ -53,7 +53,7 @@ class SignClient extends AbstractClient
             curl_setopt($curl, CURLOPT_PROXYPORT, explode(':', $this->proxy)[1]);
         }
 
-        $this->writeLog(LogEmitter::INFO, sprintf(
+        $this->writeLog(self::INFO, sprintf(
             '[%s] %s',
             $method !== null ? $method : 'GET',
             $this->getEndpoint() . $url
@@ -67,7 +67,7 @@ class SignClient extends AbstractClient
         $response = curl_exec($curl);
         curl_close($curl);
 
-        $this->writeLog(LogEmitter::INFO, sprintf('Response : %s', $this->sanitizeResponse($response)));
+        $this->writeLog(self::INFO, sprintf('Response : %s', $this->sanitizeResponse($response)));
 
         return $response;
     }
