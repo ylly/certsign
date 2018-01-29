@@ -1,6 +1,6 @@
 <?php
 
-namespace YllyCertiSign;
+namespace YllyCertSign;
 
 use Symfony\Component\Yaml\Yaml;
 

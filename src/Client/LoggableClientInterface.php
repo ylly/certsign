@@ -1,8 +1,8 @@
 <?php
 
-namespace YllyCertiSign\Client;
+namespace YllyCertSign\Client;
 
-use YllyCertiSign\Log\LogListenerInterface;
+use YllyCertSign\Log\LogListenerInterface;
 
 interface LoggableClientInterface
 {

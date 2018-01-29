@@ -1,8 +1,8 @@
 <?php
 
-namespace YllyCertiSign\Client\Sign;
+namespace YllyCertSign\Client\Sign;
 
-use YllyCertiSign\Client\AbstractClient;
+use YllyCertSign\Client\AbstractClient;
 
 class SignTestClient extends AbstractClient implements SignClientInterface
 {

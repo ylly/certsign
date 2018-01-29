@@ -1,8 +1,8 @@
 <?php
 
-use YllyCertiSign\Configurator;
-use YllyCertiSign\Factory\SignatorFactory;
-use YllyCertiSign\Signator;
+use YllyCertSign\Configurator;
+use YllyCertSign\Factory\SignatorFactory;
+use YllyCertSign\Signator;
 
 class ConfiguratorTest extends \PHPUnit\Framework\TestCase
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace YllyCertiSign\Client\SMS;
+namespace YllyCertSign\Client\SMS;
 
-use YllyCertiSign\Client\AbstractClient;
+use YllyCertSign\Client\AbstractClient;
 
 class SMSTestClient extends AbstractClient implements SMSClientInterface
 {

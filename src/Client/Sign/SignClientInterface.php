@@ -1,8 +1,8 @@
 <?php
 
-namespace YllyCertiSign\Client\Sign;
+namespace YllyCertSign\Client\Sign;
 
-use YllyCertiSign\Client\LoggableClientInterface;
+use YllyCertSign\Client\LoggableClientInterface;
 
 interface SignClientInterface extends LoggableClientInterface
 {

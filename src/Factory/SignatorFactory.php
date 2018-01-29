@@ -1,11 +1,11 @@
 <?php
 
-namespace YllyCertiSign\Factory;
+namespace YllyCertSign\Factory;
 
-use YllyCertiSign\Client\Sign\SignClient;
-use YllyCertiSign\Client\SMS\SMSClient;
-use YllyCertiSign\Configurator;
-use YllyCertiSign\Signator;
+use YllyCertSign\Client\Sign\SignClient;
+use YllyCertSign\Client\SMS\SMSClient;
+use YllyCertSign\Configurator;
+use YllyCertSign\Signator;
 
 class SignatorFactory
 {

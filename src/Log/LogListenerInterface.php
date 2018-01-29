@@ -1,6 +1,6 @@
 <?php
 
-namespace YllyCertiSign\Log;
+namespace YllyCertSign\Log;
 
 interface LogListenerInterface
 {

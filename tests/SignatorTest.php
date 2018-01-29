@@ -1,10 +1,10 @@
 <?php
 
-use YllyCertiSign\Client\Sign\SignTestClient;
-use YllyCertiSign\Client\SMS\SMSTestClient;
-use YllyCertiSign\Data\Request;
-use YllyCertiSign\Data\Signature;
-use YllyCertiSign\Signator;
+use YllyCertSign\Client\Sign\SignTestClient;
+use YllyCertSign\Client\SMS\SMSTestClient;
+use YllyCertSign\Data\Request;
+use YllyCertSign\Data\Signature;
+use YllyCertSign\Signator;
 
 class SignatorTest extends \PHPUnit\Framework\TestCase
 {

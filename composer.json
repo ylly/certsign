@@ -1,5 +1,5 @@
 {
-    "name": "ylly/ylly_certisign_php",
+    "name": "ylly/certsign",
     "type": "library",
     "authors": [
         {
@@ -14,7 +14,7 @@
     },
     "autoload": {
         "psr-4": {
-            "YllyCertiSign\\": "src/"
+            "YllyCertSign\\": "src/"
         }
     },
     "require-dev": {

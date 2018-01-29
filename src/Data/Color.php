@@ -1,6 +1,6 @@
 <?php
 
-namespace YllyCertiSign\Data;
+namespace YllyCertSign\Data;
 
 class Color
 {
