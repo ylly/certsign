@@ -114,7 +114,7 @@ class Signator
     private function createSignRequest(Request $request, $orderId)
     {
         $signData = [];
-        foreach($request->documents as $document) {
+        foreach ($request->documents as $document) {
             $signData[] = [
                 'externalSignatureRequestId' => $orderId . '_' . $document->name,
                 'signatureOptions' => [
@@ -158,7 +158,7 @@ class Signator
     {
         $documents = [];
 
-        foreach($signatures as $signature) {
+        foreach ($signatures as $signature) {
             $signed = $this->signClient->get('/ephemeral/signatures/?id=' . $signature->signatureRequestId);
             $name = explode('_', $signed->externalSignatureRequestId)[1];
             $doc = new Document($name, $signed->signedContent);

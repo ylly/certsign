@@ -30,7 +30,7 @@ class SignTestClient extends AbstractClient implements SignClientInterface
                 'externalOrderRequestId' => null,
                 'status' => 'VALIDATED'
             ];
-        } else if (strpos($url, '/ephemeral/signatures?orderRequestId=') !== false) {
+        } elseif (strpos($url, '/ephemeral/signatures?orderRequestId=') !== false) {
             return [
                 (object)[
                     'signatureRequestId' => 1,
@@ -47,7 +47,7 @@ class SignTestClient extends AbstractClient implements SignClientInterface
                     'status' => 'SIGN_CREATED'
                 ]
             ];
-        } else if (strpos($url, '/ephemeral/signatures/sign?mode=SYNC&orderRequestId=') !== false) {
+        } elseif (strpos($url, '/ephemeral/signatures/sign?mode=SYNC&orderRequestId=') !== false) {
             return [
                 (object)[
                     'signatureRequestId' => 1,
