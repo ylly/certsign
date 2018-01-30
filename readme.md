@@ -1,25 +1,44 @@
-# Short library to support certified signature of documents provided by CertEurope
+# CertSign PHP library
 
-## Usage example :
+This library allows you to easily implement CertSign by CertEurope into your project.
 
-```php
-$signator = SignatorFactory::createFromYamlFile('/path/to/config.yml');
-//$signator = SignatorFactory::createFromArray($configArray);
+## Installation :
+
+```
+composer require ylly/certsign
 ```
 
+## Usage :
+
+### Create a signator
+
+The signator manage authentication and signature
+
+You can create a signator from a YAML config file
+```php
+$signator = SignatorFactory::createFromYamlFile('/path/to/config.yml');
+```
+
+Or from an key-value array of configuration
 ```php
 $signator = SignatorFactory::createFromArray($configArray);
+```
 
+### Authenticate user
+
+To authenticate the user, you can use these methods to send and verifiy a code sent by SMS
+```php
 $smsSent = $signator->sendAuthenticationRequest('0601020304');
-
 $validated = $signator->checkAuthenticationRequest('0601020304', '123456');
 ```
 
-```php
-$signator = SignatorFactory::createFromArray($configArray);
+### Sign document
 
+Once the user is verified, you can generate the request with a signature and send it to CertSign, if everything is valid, you will recieve a list of signed documents with base64 encoded content
+```php
 $signature = Signature::create()->setImage('/path/to/sign.png', false);
 //$signature = Signature::create()->setImage('BASE64');
+//$signature = Signature::create()->setImage(new Image(...));
 
 $request = Request::create()
     ->setHolder('Firstname', 'Lastname', 'certisign@ylly.fr', '0601020304')
@@ -32,7 +51,7 @@ $documents = $signator->signDocuments($request);
 ## Configuration file :
 
 ```yaml
-env: test
+env: test # or prod
 cert: /etc/ssl/certisign.pem
 cert_password: password
 api_key: 123456
@@ -52,8 +71,6 @@ class Listener implement LogListenerInterface
         // do something
     }
 }
-
-$signator = SignatorFactory::createFromArray($configArray);
 
 $signator->addListener(new Listener());
 ```
