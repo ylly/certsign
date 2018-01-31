@@ -1,6 +1,8 @@
 {
     "name": "ylly/certsign",
+    "description": "PHP Library for CertSign by CertEurope ",
     "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "Mickaël BLONDEAU",
