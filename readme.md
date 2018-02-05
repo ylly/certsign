@@ -2,6 +2,14 @@
 
 This library allows you to easily implement CertSign by CertEurope into your project.
 
+[![Build Status](https://travis-ci.org/ylly/certsign.svg?branch=master)](https://travis-ci.org/ylly/certsign)
+
+## Require :
+
+* PHP 5.4+
+* PHP GD
+* FreeType
+
 ## Installation :
 
 ```
