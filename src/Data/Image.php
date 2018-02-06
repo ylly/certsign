@@ -46,7 +46,11 @@ class Image
         $y = $this->style->getY() + $this->style->getSpacing() * $this->textIndex;
         ++$this->textIndex;
 
-        imagettftext($this->image, $this->style->getFontSize(), 0, $x, $y, $this->style->getColor($this->image), $font, $text);
+        if (function_exists('imagettftext')) {
+            imagettftext($this->image, $this->style->getFontSize(), 0, $x, $y, $this->style->getColor($this->image), $font, $text);
+        } else {
+            imagestring($this->image, $this->style->getFontSize(), $x, $y, $text, $this->style->getColor($this->image));
+        }
     }
 
     /**
