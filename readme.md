@@ -61,6 +61,9 @@ $request->setOTP('0601020304'); // Will send a SMS
 
 $signRequest = $signator->create($request);
 
+// Send the OTP, can be reused to generate a new OTP
+$signator->validate($signRequest->getId());
+
 // Enter OTP given by SMS or Email, will return false if the code is invalid
 $documents = $signator->sign($signRequest, 'MyOTP');
 ```
