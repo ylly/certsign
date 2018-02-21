@@ -59,21 +59,21 @@ The authentication can be handled by email or SMS
 $request->setOTP('0601020304'); // Will send a SMS
 //$request->setOTP('certsign@ylly.fr'); // Will send an Email
 
-$signRequest = $signator->create($request);
+$orderId = $signator->create($request);
 
 // Send the OTP, can be reused to generate a new OTP
-$signator->validate($signRequest->getId());
+$signator->validate($orderId);
 
 // Enter OTP given by SMS or Email, will return false if the code is invalid
-$documents = $signator->sign($signRequest, 'MyOTP');
+$documents = $signator->sign($orderId, 'MyOTP');
 ```
 
 #### Without authentication (Direct sign)
 
 ```php
-$signRequest = $signator->create($request);
+$orderId = $signator->create($request);
 
-$documents = $signator->sign($signRequest);
+$documents = $signator->sign($orderId);
 ```
 
 ## Configuration file :

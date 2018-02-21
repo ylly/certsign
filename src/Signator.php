@@ -5,12 +5,13 @@ namespace YllyCertSign;
 use YllyCertSign\Client\Sign\SignClientInterface;
 use YllyCertSign\Data\Document;
 use YllyCertSign\Data\Request;
-use YllyCertSign\Data\SignatureRequest;
 use YllyCertSign\Log\LogListenerInterface;
 
 class Signator
 {
-    /** @var SignClientInterface */
+    /**
+     * @var SignClientInterface
+     */
     private $client;
 
     /**
@@ -31,19 +32,15 @@ class Signator
 
     /**
      * @param Request $request
-     * @return SignatureRequest
+     * @return int
      */
     public function create(Request $request)
     {
         $order = $this->createSignOrder($request);
 
-        $response = $this->createSignRequest($request, $order->orderRequestId);
+        $this->createSignRequest($request, $order->orderRequestId);
 
-        $signatureRequest = new SignatureRequest();
-        $signatureRequest->setId($order->orderRequestId);
-        $signatureRequest->setData($response);
-
-        return $signatureRequest;
+        return $order->orderRequestId;
     }
 
     /**
@@ -55,17 +52,17 @@ class Signator
     }
 
     /**
-     * @param SignatureRequest $signatureRequest
+     * @param int $orderId
      * @param string|null $otp
      * @return false|Data\Document[]
      */
-    public function sign(SignatureRequest $signatureRequest, $otp = null)
+    public function sign($orderId, $otp = null)
     {
-        $response = $this->signRequest($signatureRequest->getId(), $otp);
+        $response = $this->signRequest($orderId, $otp);
         if (isset($response->errorMsg)) {
             return false;
         } else {
-            return $this->getSignedDocuments($signatureRequest->getData());
+            return $this->getSignedDocuments($response);
         }
     }
 

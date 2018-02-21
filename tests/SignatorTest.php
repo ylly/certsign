@@ -22,8 +22,8 @@ class SignatorTest extends \PHPUnit\Framework\TestCase
             ->addDocument('DOC1', $document, $signature, false)
             ->addDocument('DOC2', $base64, $signature);
 
-        $req = $signator->create($request);
-        $documents = $signator->sign($req);
+        $orderId = $signator->create($request);
+        $documents = $signator->sign($orderId);
 
         $this->assertEquals(2, count($documents));
     }
@@ -44,9 +44,9 @@ class SignatorTest extends \PHPUnit\Framework\TestCase
             ->addDocument('DOC1', $document, $signature, false)
             ->addDocument('DOC2', $base64, $signature);
 
-        $req = $signator->create($request);
-        $signator->validate($req->getId());
-        $documents = $signator->sign($req, '1234');
+        $orderId = $signator->create($request);
+        $signator->validate($orderId);
+        $documents = $signator->sign($orderId, '1234');
 
         $this->assertEquals(2, count($documents));
     }
