@@ -7,17 +7,22 @@ class Request
     /** @var Holder */
     public $holder;
 
+    /** @var OTP */
+    public $otp;
+
     /** @var Document[] */
     public $documents;
 
     /**
      * @param Holder|null $holder
      * @param Document[]|null $documents
+     * @param OTP|null $otp
      */
-    public function __construct($holder = null, $documents = null)
+    public function __construct($holder = null, $documents = null, $otp = null)
     {
         $this->holder = $holder;
         $this->documents = $documents;
+        $this->otp = $otp !== null ? $otp : new OTP(false, '');
     }
 
     /**
@@ -52,6 +57,16 @@ class Request
     public function setHolder($firstname, $lastname, $email, $mobile)
     {
         $this->holder = new Holder($firstname, $lastname, $email, $mobile);
+        return $this;
+    }
+
+    /**
+     * @param $contact
+     * @return $this
+     */
+    public function setOTP($contact)
+    {
+        $this->otp = new OTP(true, $contact);
         return $this;
     }
 }

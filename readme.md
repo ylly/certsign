@@ -32,38 +32,53 @@ Or from an key-value array of configuration
 $signator = SignatorFactory::createFromArray($configArray);
 ```
 
-### Authenticate user
+### Fill user informations and documents
 
-To authenticate the user, you can use these methods to send and verifiy a code sent by SMS
-```php
-$smsSent = $signator->sendAuthenticationRequest('0601020304');
-$validated = $signator->checkAuthenticationRequest('0601020304', '123456');
-```
+The users informations and documents are stored in a signature request
 
-### Sign document
-
-Once the user is verified, you can generate the request with a signature and send it to CertSign, if everything is valid, you will recieve a list of signed documents with base64 encoded content
 ```php
 $signature = Signature::create()->setImage('/path/to/sign.png', false);
 //$signature = Signature::create()->setImage('BASE64');
 //$signature = Signature::create()->setImage(new Image(...));
 
 $request = Request::create()
-    ->setHolder('Firstname', 'Lastname', 'certisign@ylly.fr', '0601020304')
+    ->setHolder('Firstname', 'Lastname', 'certsign@ylly.fr', '0601020304')
     ->addDocument('Document-1', '/path/to/doc.pdf', $signature, false)
     ->addDocument('Document-2', 'BASE64', $signature);
+```
 
-$documents = $signator->signDocuments($request);
+### Sign documents
+
+You have two ways to sign documents, with or without authentication
+
+The authentication can be handled by email or SMS
+
+#### With authentication (OTP)
+
+```php
+$request->setOTP('0601020304'); // Will send a SMS
+//$request->setOTP('certsign@ylly.fr'); // Will send an Email
+
+$signRequest = $signator->create($request);
+
+// Enter OTP given by SMS or Email, will return false if the code is invalid
+$documents = $signator->sign($signRequest, 'MyOTP');
+```
+
+#### Without authentication (Direct sign)
+
+```php
+$signRequest = $signator->create($request);
+
+$documents = $signator->sign($signRequest);
 ```
 
 ## Configuration file :
 
 ```yaml
 env: test # or prod
-cert: /etc/ssl/certisign.pem
+cert: /etc/ssl/certsign.pem
 cert_password: password
-api_key: 123456
-api_endpoint: https://www.ylly.fr
 proxy: locahost:8080 # optionnal web proxy
 ```
 

@@ -15,8 +15,8 @@ class SignClient extends AbstractClient implements SignClientInterface
     private $proxy;
 
     private $endPoints = [
-        'prod' => 'https://sign.certeurope.fr/',
-        'test' => 'https://sign-sandbox.certeurope.fr/'
+        'prod' => 'https://sign.certeurope.fr',
+        'test' => 'https://sign-sandbox.certeurope.fr'
     ];
 
     public function __construct($environnement, $certPath, $certPassword, $proxy)

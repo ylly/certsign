@@ -8,7 +8,7 @@ class SignTestClient extends AbstractClient implements SignClientInterface
 {
     public function get($url)
     {
-        if (strpos($url, '/ephemeral/signatures/?id=') !== false) {
+        if (strpos($url, '/signatures/?id=') !== false) {
             return (object)[
                 'signatureRequestId' => 1,
                 'externalSignatureRequestId' => '1234_DOC1',
@@ -24,13 +24,13 @@ class SignTestClient extends AbstractClient implements SignClientInterface
 
     public function post($url, $content = [])
     {
-        if (strpos($url, '/ephemeral/orders') !== false) {
+        if (strpos($url, '/orders') !== false) {
             return (object)[
                 'orderRequestId' => 1234,
                 'externalOrderRequestId' => null,
                 'status' => 'VALIDATED'
             ];
-        } elseif (strpos($url, '/ephemeral/signatures?orderRequestId=') !== false) {
+        } elseif (strpos($url, '/signatures?orderRequestId=') !== false) {
             return [
                 (object)[
                     'signatureRequestId' => 1,
@@ -47,7 +47,9 @@ class SignTestClient extends AbstractClient implements SignClientInterface
                     'status' => 'SIGN_CREATED'
                 ]
             ];
-        } elseif (strpos($url, '/ephemeral/signatures/sign?mode=SYNC&orderRequestId=') !== false) {
+        } elseif (strpos($url, '/signatures/validate?orderRequestId=') !== false) {
+            return null;
+        } elseif (strpos($url, '/signatures/sign?mode=SYNC&orderRequestId=') !== false) {
             return [
                 (object)[
                     'signatureRequestId' => 1,

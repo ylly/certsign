@@ -3,32 +3,22 @@
 namespace YllyCertSign;
 
 use YllyCertSign\Client\Sign\SignClientInterface;
-use YllyCertSign\Client\SMS\SMSClientInterface;
 use YllyCertSign\Data\Document;
 use YllyCertSign\Data\Request;
+use YllyCertSign\Data\SignatureRequest;
 use YllyCertSign\Log\LogListenerInterface;
 
 class Signator
 {
     /** @var SignClientInterface */
-    private $signClient;
-
-    /** @var SMSClientInterface */
-    private $smsClient;
-
-    /** @var string */
-    private $domain;
+    private $client;
 
     /**
-     * @param SignClientInterface $signClient
-     * @param SMSClientInterface $smsClient
-     * @param string $domain
+     * @param SignClientInterface $client
      */
-    public function __construct(SignClientInterface $signClient, SMSClientInterface $smsClient, $domain)
+    public function __construct(SignClientInterface $client)
     {
-        $this->signClient = $signClient;
-        $this->smsClient = $smsClient;
-        $this->domain = $domain;
+        $this->client = $client;
     }
 
     /**
@@ -36,55 +26,47 @@ class Signator
      */
     public function addListener(LogListenerInterface $listener)
     {
-        $this->signClient->addListener($listener);
-        $this->smsClient->addListener($listener);
-    }
-
-    /**
-     * @param string $number
-     * @return bool
-     */
-    public function sendAuthenticationRequest($number)
-    {
-        $response = $this->smsClient->call('AddAcces', [
-            'indicatifRegional' => '33',
-            'identifiant' => $number,
-            'url' => $this->domain,
-            'parametres' => ''
-        ]);
-
-        return isset($response->error) && $response->error == 0;
-    }
-
-    /**
-     * @param string $number
-     * @param string $code
-     * @return bool
-     */
-    public function checkAuthenticationRequest($number, $code)
-    {
-        $response = $this->smsClient->call('CheckAcces', [
-            'indicatifRegional' => '33',
-            'identifiant' => $number,
-            'code' => $code
-        ]);
-
-        return isset($response->error) && $response->error == 0;
+        $this->client->addListener($listener);
     }
 
     /**
      * @param Request $request
-     * @return Data\Document[]
+     * @return SignatureRequest
      */
-    public function signDocuments(Request $request)
+    public function create(Request $request)
     {
         $order = $this->createSignOrder($request);
 
-        $signatures = $this->createSignRequest($request, $order->orderRequestId);
+        $response = $this->createSignRequest($request, $order->orderRequestId);
 
-        $this->signRequest($order->orderRequestId);
+        $signatureRequest = new SignatureRequest();
+        $signatureRequest->setId($order->orderRequestId);
+        $signatureRequest->setData($response);
 
-        return $this->getSignedDocuments($signatures);
+        return $signatureRequest;
+    }
+
+    /**
+     * @param int $orderId
+     */
+    public function validate($orderId)
+    {
+        $this->validateRequest($orderId);
+    }
+
+    /**
+     * @param SignatureRequest $signatureRequest
+     * @param string|null $otp
+     * @return false|Data\Document[]
+     */
+    public function sign(SignatureRequest $signatureRequest, $otp = null)
+    {
+        $response = $this->signRequest($signatureRequest->getId(), $otp);
+        if (isset($response->errorMsg)) {
+            return false;
+        } else {
+            return $this->getSignedDocuments($signatureRequest->getData());
+        }
     }
 
     /**
@@ -100,10 +82,12 @@ class Signator
                 'email' => $request->holder->email,
                 'mobile' => $request->holder->mobile,
                 'country' => $request->holder->country
-            ]
+            ],
+            'enableOtp' => $request->otp->enabled,
+            'otpContact' => $request->otp->contact
         ];
 
-        return $this->signClient->post('/ephemeral/orders', $signatureOrderData);
+        return $this->client->post('/ephemeral/orders', $signatureOrderData);
     }
 
     /**
@@ -138,16 +122,34 @@ class Signator
             ];
         }
 
-        return $this->signClient->post('/ephemeral/signatures?orderRequestId=' . $orderId, $signData);
+        if ($request->otp->enabled) {
+            return $this->client->post('/ephemeral/trigger/signatures?orderRequestId=' . $orderId, $signData);
+        } else {
+            return $this->client->post('/ephemeral/signatures?orderRequestId=' . $orderId, $signData);
+        }
     }
 
     /**
      * @param int $orderId
      * @return object|array
      */
-    private function signRequest($orderId)
+    private function validateRequest($orderId)
     {
-        return $this->signClient->post('/ephemeral/signatures/sign?mode=SYNC&orderRequestId=' . $orderId);
+        return $this->client->post('/ephemeral/trigger/signatures/validate?orderRequestId=' . $orderId);
+    }
+
+    /**
+     * @param int $orderId
+     * @param string $otp
+     * @return object|array
+     */
+    private function signRequest($orderId, $otp)
+    {
+        if (!empty($otp)) {
+            return $this->client->post('/ephemeral/trigger/signatures/sign?mode=SYNC&orderRequestId=' . $orderId . '&otp=' . $otp);
+        } else {
+            return $this->client->post('/ephemeral/signatures/sign?mode=SYNC&orderRequestId=' . $orderId);
+        }
     }
 
     /**
@@ -159,10 +161,12 @@ class Signator
         $documents = [];
 
         foreach ($signatures as $signature) {
-            $signed = $this->signClient->get('/ephemeral/signatures/?id=' . $signature->signatureRequestId);
-            $name = explode('_', $signed->externalSignatureRequestId)[1];
-            $doc = new Document($name, $signed->signedContent);
-            $documents[] = $doc;
+            if (isset($signature->signatureRequestId)) {
+                $signed = $this->client->get('/ephemeral/signatures/?id=' . $signature->signatureRequestId);
+                $name = explode('_', $signed->externalSignatureRequestId)[1];
+                $doc = new Document($name, $signed->signedContent);
+                $documents[] = $doc;
+            }
         }
 
         return $documents;

@@ -3,7 +3,6 @@
 namespace YllyCertSign\Factory;
 
 use YllyCertSign\Client\Sign\SignClient;
-use YllyCertSign\Client\SMS\SMSClient;
 use YllyCertSign\Configurator;
 use YllyCertSign\Signator;
 
@@ -13,16 +12,13 @@ class SignatorFactory
      * @param string $environnement
      * @param string $certPath
      * @param string $certPassword
-     * @param string $apiKey
-     * @param string $domain
      * @param string|null $proxy
      * @return Signator
      */
-    public static function create($environnement, $certPath, $certPassword, $apiKey, $domain, $proxy)
+    public static function create($environnement, $certPath, $certPassword, $proxy)
     {
-        $signClient = new SignClient($environnement, $certPath, $certPassword, $proxy);
-        $smsClient = new SMSClient($environnement, $apiKey, $proxy);
-        return new Signator($signClient, $smsClient, $domain);
+        $client = new SignClient($environnement, $certPath, $certPassword, $proxy);
+        return new Signator($client);
     }
 
     /**
@@ -35,8 +31,6 @@ class SignatorFactory
             $config['env'],
             $config['cert'],
             $config['cert_password'],
-            $config['api_key'],
-            $config['api_endpoint'],
             isset($config['proxy']) ? $config['proxy'] : null
         );
     }
