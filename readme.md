@@ -10,6 +10,10 @@ This library allows you to easily implement CertSign by CertEurope into your pro
 * PHP GD
 * PHP compiled with FreeType support, else the provided image generation service will fallback to standard text
 
+## Limitations :
+
+* Only SYNC sign mode is implemented
+
 ## Installation :
 
 ```

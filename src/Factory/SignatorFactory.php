@@ -10,14 +10,14 @@ class SignatorFactory
 {
     /**
      * @param string $environnement
-     * @param string $certPath
+     * @param string $certAbsolutePath
      * @param string $certPassword
      * @param string|null $proxy
      * @return Signator
      */
-    public static function create($environnement, $certPath, $certPassword, $proxy)
+    public static function create($environnement, $certAbsolutePath, $certPassword, $proxy)
     {
-        $client = new SignClient($environnement, $certPath, $certPassword, $proxy);
+        $client = new SignClient($environnement, $certAbsolutePath, $certPassword, $proxy);
         return new Signator($client);
     }
 
@@ -25,9 +25,9 @@ class SignatorFactory
      * @param array $config
      * @return Signator
      */
-    public static function createFromArray($config)
+    public static function createFromArray(array $config)
     {
-        return static::create(
+        return self::create(
             $config['env'],
             $config['cert'],
             $config['cert_password'],
@@ -36,12 +36,12 @@ class SignatorFactory
     }
 
     /**
-     * @param string $pathToFile
+     * @param string $absolutePath
      * @return Signator
      */
-    public static function createFromYamlFile($pathToFile)
+    public static function createFromYamlFile($absolutePath)
     {
-        $config = Configurator::loadFromFile($pathToFile);
+        $config = Configurator::loadFromFile($absolutePath);
         return self::createFromArray($config);
     }
 }
