@@ -1,6 +1,6 @@
 <?php
 
-namespace YllyCertiSign\Exception;
+namespace YllyCertSign\Exception;
 
 class WebserviceException extends \Exception
 {

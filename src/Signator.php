@@ -2,7 +2,7 @@
 
 namespace YllyCertSign;
 
-use YllyCertiSign\Exception\WebserviceException;
+use YllyCertSign\Exception\WebserviceException;
 use YllyCertSign\Client\Sign\SignClientInterface;
 use YllyCertSign\Log\LogListenerInterface;
 use YllyCertSign\Request\Request;
