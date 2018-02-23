@@ -2,10 +2,11 @@
 
 namespace YllyCertSign;
 
+use YllyCertiSign\Exception\WebserviceException;
 use YllyCertSign\Client\Sign\SignClientInterface;
-use YllyCertSign\Data\Document;
-use YllyCertSign\Data\Request;
 use YllyCertSign\Log\LogListenerInterface;
+use YllyCertSign\Request\Request;
+use YllyCertSign\Request\Signature\Document;
 
 class Signator
 {
@@ -33,14 +34,31 @@ class Signator
     /**
      * @param Request $request
      * @return int
+     * @throws WebserviceException
      */
-    public function create(Request $request)
+    public function createOrder(Request $request)
     {
-        $order = $this->createSignOrder($request);
+        $response = $this->createSignOrder($request);
 
-        $this->createSignRequest($request, $order->orderRequestId);
+        if (isset($response->errorMsg)) {
+            throw new WebserviceException($response->errorMsg);
+        } else {
+            return $response->orderRequestId;
+        }
+    }
 
-        return $order->orderRequestId;
+    /**
+     * @param Request $request
+     * @param int $orderId
+     * @throws WebserviceException
+     */
+    public function createRequest(Request $request, $orderId)
+    {
+        $response = $this->createSignRequest($request, $orderId);
+
+        if (isset($response->errorMsg)) {
+            throw new WebserviceException($response->errorMsg);
+        }
     }
 
     /**
@@ -54,13 +72,14 @@ class Signator
     /**
      * @param int $orderId
      * @param string|null $otp
-     * @return false|Data\Document[]
+     * @return Document[]
+     * @throws WebserviceException
      */
     public function sign($orderId, $otp = null)
     {
         $response = $this->signRequest($orderId, $otp);
         if (isset($response->errorMsg)) {
-            return false;
+            throw new WebserviceException($response->errorMsg);
         } else {
             return $this->getSignedDocuments($response);
         }

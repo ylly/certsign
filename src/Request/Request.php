@@ -1,6 +1,11 @@
 <?php
 
-namespace YllyCertSign\Data;
+namespace YllyCertSign\Request;
+
+use YllyCertSign\Request\Order\Holder;
+use YllyCertSign\Request\Order\OTP;
+use YllyCertSign\Request\Signature\Document;
+use YllyCertSign\Request\Signature\Signature;
 
 class Request
 {

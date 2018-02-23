@@ -1,6 +1,8 @@
 <?php
 
-namespace YllyCertSign\Data;
+namespace YllyCertSign\Request\Signature;
+
+use YllyCertSign\Request\Signature\Image\Image;
 
 class Signature
 {

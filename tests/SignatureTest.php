@@ -1,9 +1,9 @@
 <?php
 
-use YllyCertSign\Data\Color;
-use YllyCertSign\Data\Image;
-use YllyCertSign\Data\Signature;
-use YllyCertSign\Data\TextStyle;
+use YllyCertSign\Request\Signature\Image\Color;
+use YllyCertSign\Request\Signature\Image\Image;
+use YllyCertSign\Request\Signature\Image\TextStyle;
+use YllyCertSign\Request\Signature\Signature;
 
 class SignatureTest extends \PHPUnit\Framework\TestCase
 {

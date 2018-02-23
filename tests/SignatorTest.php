@@ -1,8 +1,8 @@
 <?php
 
 use YllyCertSign\Client\Sign\SignTestClient;
-use YllyCertSign\Data\Request;
-use YllyCertSign\Data\Signature;
+use YllyCertSign\Request\Request;
+use YllyCertSign\Request\Signature\Signature;
 use YllyCertSign\Signator;
 
 class SignatorTest extends \PHPUnit\Framework\TestCase
@@ -22,7 +22,8 @@ class SignatorTest extends \PHPUnit\Framework\TestCase
             ->addDocument('DOC1', $document, $signature, false)
             ->addDocument('DOC2', $base64, $signature);
 
-        $orderId = $signator->create($request);
+        $orderId = $signator->createOrder($request);
+        $signator->createRequest($request, $orderId);
         $documents = $signator->sign($orderId);
 
         $this->assertEquals(2, count($documents));
@@ -44,8 +45,9 @@ class SignatorTest extends \PHPUnit\Framework\TestCase
             ->addDocument('DOC1', $document, $signature, false)
             ->addDocument('DOC2', $base64, $signature);
 
-        $orderId = $signator->create($request);
+        $orderId = $signator->createOrder($request);
         $signator->validate($orderId);
+        $signator->createRequest($request, $orderId);
         $documents = $signator->sign($orderId, '1234');
 
         $this->assertEquals(2, count($documents));

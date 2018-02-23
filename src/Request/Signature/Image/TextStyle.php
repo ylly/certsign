@@ -1,6 +1,6 @@
 <?php
 
-namespace YllyCertSign\Data;
+namespace YllyCertSign\Request\Signature\Image;
 
 class TextStyle
 {

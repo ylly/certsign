@@ -1,6 +1,6 @@
 <?php
 
-namespace YllyCertSign\Data;
+namespace YllyCertSign\Request\Signature\Image;
 
 class Image
 {
@@ -40,7 +40,7 @@ class Image
      */
     public function addText($text)
     {
-        $font = __DIR__ . '/../../public/fonts/arial.ttf';
+        $font = __DIR__ . '/../../../../public/fonts/arial.ttf';
 
         $x = $this->style->getX();
         $y = $this->style->getY() + $this->style->getSpacing() * $this->textIndex;

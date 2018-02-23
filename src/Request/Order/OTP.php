@@ -1,6 +1,6 @@
 <?php
 
-namespace YllyCertSign\Data;
+namespace YllyCertSign\Request\Order;
 
 class OTP
 {
