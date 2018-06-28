@@ -2,6 +2,7 @@
 
 namespace YllyCertSign;
 
+use YllyCertSign\Exception\OTPException;
 use YllyCertSign\Exception\WebserviceException;
 use YllyCertSign\Client\Sign\SignClientInterface;
 use YllyCertSign\Log\LogListenerInterface;
@@ -10,6 +11,8 @@ use YllyCertSign\Request\Signature\Document;
 
 class Signator
 {
+    const ERROR_WRONG_OTP = 'ERROR_MAUVAIS_CODE';
+
     /**
      * @var SignClientInterface
      */
@@ -40,7 +43,7 @@ class Signator
     {
         $response = $this->createSignOrder($request);
 
-        if (isset($response->errorMsg)) {
+        if (isset($response->errorMsg) || !isset($response->orderRequestId)) {
             throw new WebserviceException($response->errorMsg);
         } else {
             return $response->orderRequestId;
@@ -63,10 +66,15 @@ class Signator
 
     /**
      * @param int $orderId
+     * @throws WebserviceException
      */
     public function validate($orderId)
     {
-        $this->validateRequest($orderId);
+        $response = $this->validateRequest($orderId);
+
+        if (isset($response->errorMsg)) {
+            throw new WebserviceException($response->errorMsg);
+        }
     }
 
     /**
@@ -78,7 +86,8 @@ class Signator
     public function sign($orderId, $otp = null)
     {
         $response = $this->signRequest($orderId, $otp);
-        if (isset($response->errorMsg)) {
+
+        if (isset($response->errorMsg) && !isset($signature->signatureRequestId)) {
             throw new WebserviceException($response->errorMsg);
         } else {
             return $this->getSignedDocuments($response);
@@ -88,6 +97,7 @@ class Signator
     /**
      * @param Request $request
      * @return object|array
+     * @throws WebserviceException
      */
     private function createSignOrder(Request $request)
     {
@@ -103,17 +113,24 @@ class Signator
             'otpContact' => $request->otp->contact
         ];
 
-        return $this->client->post('/ephemeral/orders', $signatureOrderData);
+        $response = $this->client->post('/ephemeral/orders', $signatureOrderData);
+        if (isset($response->errorMsg)) {
+            throw new WebserviceException($response->errorMsg);
+        } else {
+            return $response;
+        }
     }
 
     /**
      * @param Request $request
      * @param int $orderId
      * @return object|array
+     * @throws WebserviceException
      */
     private function createSignRequest(Request $request, $orderId)
     {
         $signData = [];
+
         foreach ($request->documents as $document) {
             $signData[] = [
                 'externalSignatureRequestId' => $orderId . '_' . $document->name,
@@ -139,9 +156,19 @@ class Signator
         }
 
         if ($request->otp->enabled) {
-            return $this->client->post('/ephemeral/trigger/signatures?orderRequestId=' . $orderId, $signData);
+            $response = $this->client->post('/ephemeral/trigger/signatures?orderRequestId=' . $orderId, $signData);
         } else {
-            return $this->client->post('/ephemeral/signatures?orderRequestId=' . $orderId, $signData);
+            $response = $this->client->post('/ephemeral/signatures?orderRequestId=' . $orderId, $signData);
+        }
+
+        if (isset($response->errorMsg)) {
+            if (isset($response->errorLabel) && $response->errorLabel === self::ERROR_WRONG_OTP) {
+                throw new OTPException($response->errorMsg);
+            } else {
+                throw new WebserviceException($response->errorMsg);
+            }
+        } else {
+            return $response;
         }
     }
 
@@ -177,12 +204,10 @@ class Signator
         $documents = [];
 
         foreach ($signatures as $signature) {
-            if (isset($signature->signatureRequestId)) {
-                $signed = $this->client->get('/ephemeral/signatures/?id=' . $signature->signatureRequestId);
-                $name = explode('_', $signed->externalSignatureRequestId)[1];
-                $doc = new Document($name, $signed->signedContent);
-                $documents[] = $doc;
-            }
+            $signed = $this->client->get('/ephemeral/signatures/?id=' . $signature->signatureRequestId);
+            $name = explode('_', $signed->externalSignatureRequestId)[1];
+            $doc = new Document($name, $signed->signedContent);
+            $documents[] = $doc;
         }
 
         return $documents;
