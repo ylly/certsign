@@ -43,8 +43,10 @@ class Signator
     {
         $response = $this->createSignOrder($request);
 
-        if (isset($response->errorMsg) || !isset($response->orderRequestId)) {
+        if (isset($response->errorMsg)) {
             throw new WebserviceException($response->errorMsg);
+        } elseif (!isset($response->orderRequestId)) {
+            throw new WebserviceException();
         } else {
             return $response->orderRequestId;
         }
@@ -87,8 +89,10 @@ class Signator
     {
         $response = $this->signRequest($orderId, $otp);
 
-        if (isset($response->errorMsg) && !isset($signature->signatureRequestId)) {
+        if (isset($response->errorMsg)) {
             throw new WebserviceException($response->errorMsg);
+        } elseif (!is_array($response)) {
+            throw new WebserviceException();
         } else {
             return $this->getSignedDocuments($response);
         }
@@ -196,7 +200,7 @@ class Signator
     }
 
     /**
-     * @param $signatures
+     * @param object[] $signatures
      * @return Document[]
      */
     private function getSignedDocuments($signatures)

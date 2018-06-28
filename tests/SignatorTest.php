@@ -7,6 +7,9 @@ use YllyCertSign\Signator;
 
 class SignatorTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @throws \YllyCertSign\Exception\WebserviceException
+     */
     public function testCreateSignOrder()
     {
         $client = new SignTestClient();
@@ -20,7 +23,8 @@ class SignatorTest extends \PHPUnit\Framework\TestCase
         $request = Request::create()
             ->setHolder('Firstname', 'Lastname', 'certisign@ylly.fr', '0601020304')
             ->addDocument('DOC1', $document, $signature, false)
-            ->addDocument('DOC2', $base64, $signature);
+            ->addDocument('DOC2', $base64, $signature)
+        ;
 
         $orderId = $signator->createOrder($request);
         $signator->createRequest($request, $orderId);
@@ -29,6 +33,9 @@ class SignatorTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(2, count($documents));
     }
 
+    /**
+     * @throws \YllyCertSign\Exception\WebserviceException
+     */
     public function testCreateOTPSignOrder()
     {
         $client = new SignTestClient();
@@ -43,7 +50,8 @@ class SignatorTest extends \PHPUnit\Framework\TestCase
             ->setHolder('Firstname', 'Lastname', 'certisign@ylly.fr', '0601020304')
             ->setOTP('0601020304')
             ->addDocument('DOC1', $document, $signature, false)
-            ->addDocument('DOC2', $base64, $signature);
+            ->addDocument('DOC2', $base64, $signature)
+        ;
 
         $orderId = $signator->createOrder($request);
         $signator->validate($orderId);

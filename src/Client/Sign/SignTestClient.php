@@ -6,6 +6,11 @@ use YllyCertSign\Client\AbstractClient;
 
 class SignTestClient extends AbstractClient implements SignClientInterface
 {
+    /**
+     * @param string $url
+     * @return object
+     * @throws \Exception
+     */
     public function get($url)
     {
         if (strpos($url, '/signatures/?id=') !== false) {
@@ -22,6 +27,12 @@ class SignTestClient extends AbstractClient implements SignClientInterface
         }
     }
 
+    /**
+     * @param string $url
+     * @param array $content
+     * @return array|null|object
+     * @throws \Exception
+     */
     public function post($url, $content = [])
     {
         if (strpos($url, '/orders') !== false) {
