@@ -22,6 +22,16 @@ composer require ylly/certsign
 
 ## Usage :
 
+### Convert the certificate
+
+This library use a PEM certificate, as CertSign provide a P12 file, you need to convert this certificate into the PEM
+
+You will need to enter the certificate's password (you can use the -passin 'pass:my_password' argument)
+
+```
+openssl pkcs12 -in cert.p12 -out cert.pem
+```
+
 ### Create a signator
 
 The signator manage authentication and signature
