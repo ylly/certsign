@@ -90,7 +90,11 @@ class Signator
         $response = $this->signRequest($orderId, $otp);
 
         if (isset($response->errorMsg)) {
-            throw new WebserviceException($response->errorMsg);
+            if (isset($response->errorLabel) && $response->errorLabel === self::ERROR_WRONG_OTP) {
+                throw new OTPException($response->errorMsg);
+            } else {
+                throw new WebserviceException($response->errorMsg);
+            }
         } elseif (!is_array($response)) {
             throw new WebserviceException();
         } else {
@@ -114,7 +118,8 @@ class Signator
                 'country' => $request->holder->country
             ],
             'enableOtp' => $request->otp->enabled,
-            'otpContact' => $request->otp->contact
+            'otpContact' => $request->otp->contact,
+            'clientIdentifier' => $request->getClientId()
         ];
 
         $response = $this->client->post('/ephemeral/orders', $signatureOrderData);
@@ -166,11 +171,7 @@ class Signator
         }
 
         if (isset($response->errorMsg)) {
-            if (isset($response->errorLabel) && $response->errorLabel === self::ERROR_WRONG_OTP) {
-                throw new OTPException($response->errorMsg);
-            } else {
-                throw new WebserviceException($response->errorMsg);
-            }
+            throw new WebserviceException($response->errorMsg);
         } else {
             return $response;
         }

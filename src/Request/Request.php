@@ -18,6 +18,9 @@ class Request
     /** @var Document[] */
     public $documents;
 
+    /** @var string */
+    private $clientId;
+
     /**
      * @param Holder|null $holder
      * @param Document[]|null $documents
@@ -73,5 +76,21 @@ class Request
     {
         $this->otp = new OTP(true, $contact);
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    /**
+     * @param string $clientId
+     */
+    public function setClientId($clientId)
+    {
+        $this->clientId = $clientId;
     }
 }
