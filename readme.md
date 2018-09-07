@@ -7,6 +7,7 @@ This library allows you to easily implement CertSign by CertEurope into your pro
 ## Require :
 
 * PHP 5.4+
+* PHP CURL
 * PHP GD
 * PHP compiled with FreeType support, else the provided image generation service will fallback to standard text
 
