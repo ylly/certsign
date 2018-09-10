@@ -50,8 +50,8 @@ class Request
      */
     public function addDocument($name, $data, Signature $signature = null, $raw = true)
     {
-        $document = new Document($name, $data, $signature, $raw);
-        $this->documents[] = $document;
+        $this->documents[] = new Document($name, $data, $signature, $raw);
+
         return $this;
     }
 
@@ -65,6 +65,7 @@ class Request
     public function setHolder($firstname, $lastname, $email, $mobile)
     {
         $this->holder = new Holder($firstname, $lastname, $email, $mobile);
+
         return $this;
     }
 
@@ -75,6 +76,7 @@ class Request
     public function setOTP($contact)
     {
         $this->otp = new OTP(true, $contact);
+
         return $this;
     }
 
@@ -88,9 +90,12 @@ class Request
 
     /**
      * @param string $clientId
+     * @return $this
      */
     public function setClientId($clientId)
     {
         $this->clientId = $clientId;
+
+        return $this;
     }
 }
