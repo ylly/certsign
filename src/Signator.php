@@ -12,6 +12,8 @@ use YllyCertSign\Request\Signature\Document;
 class Signator
 {
     const ERROR_WRONG_OTP = 'ERROR_MAUVAIS_CODE';
+    const ERROR_ELAPSED_OTP = 'ERROR_NBR_ESSAI';
+    const ERROR_KO_OTP = 'ERROR_CODE_KO';
 
     /**
      * @var SignClientInterface
@@ -90,7 +92,8 @@ class Signator
         $response = $this->signRequest($orderId, $otp);
 
         if (isset($response->errorMsg)) {
-            if (isset($response->errorLabel) && $response->errorLabel === self::ERROR_WRONG_OTP) {
+            $otpErrors = [self::ERROR_WRONG_OTP, self::ERROR_ELAPSED_OTP, self::ERROR_KO_OTP];
+            if (isset($response->errorLabel) && in_array($response->errorLabel, $otpErrors)) {
                 throw new OTPException($response->errorMsg);
             } else {
                 throw new WebserviceException($response->errorMsg);
