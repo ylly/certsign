@@ -92,7 +92,7 @@ $documents = $signator->sign($orderId, 'MyOTP');
 
 ```php
 // Generate the order, returns the order ID
-$orderId = $signator->create($request);
+$orderId = $signator->createOrder($request);
 
 // Create the signature request with the documents and signature image
 $signator->createRequest($request, $orderId);
