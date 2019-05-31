@@ -57,11 +57,12 @@ class Signator
     /**
      * @param Request $request
      * @param int $orderId
+     * @param string|null $externalIdPrefix
      * @throws WebserviceException
      */
-    public function createRequest(Request $request, $orderId)
+    public function createRequest(Request $request, $orderId, $externalIdPrefix = null)
     {
-        $response = $this->createSignRequest($request, $orderId);
+        $response = $this->createSignRequest($request, $orderId, $externalIdPrefix);
 
         if (isset($response->errorMsg)) {
             throw new WebserviceException($response->errorMsg);
@@ -136,16 +137,17 @@ class Signator
     /**
      * @param Request $request
      * @param int $orderId
+     * @param string $externalIdPrefix
      * @return object|array
      * @throws WebserviceException
      */
-    private function createSignRequest(Request $request, $orderId)
+    private function createSignRequest(Request $request, $orderId, $externalIdPrefix)
     {
         $signData = [];
 
         foreach ($request->documents as $document) {
             $signData[] = [
-                'externalSignatureRequestId' => $orderId . '_' . $document->name,
+                'externalSignatureRequestId' => $externalIdPrefix . $orderId . '_' . $document->name,
                 'signatureOptions' => [
                     'signatureType' => 'PAdES_BASELINE_LTA',
                     'digestAlgorithmName' => 'SHA256',
