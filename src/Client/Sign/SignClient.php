@@ -2,6 +2,7 @@
 
 namespace YllyCertSign\Client\Sign;
 
+use InvalidArgumentException;
 use YllyCertSign\Client\AbstractClient;
 
 class SignClient extends AbstractClient implements SignClientInterface
@@ -16,14 +17,14 @@ class SignClient extends AbstractClient implements SignClientInterface
 
     private $endPoints = [
         'prod' => 'https://sign.certeurope.fr',
-        'test' => 'https://sign-sandbox.certeurope.fr'
+        'test' => 'https://sign-sandbox.certeurope.fr',
     ];
 
     public function __construct($environnement, $certPath, $certPassword, $proxy)
     {
         $this->environnement = $environnement;
         if (!isset($this->endPoints[$this->environnement])) {
-            throw new \Exception('Environnement not found');
+            throw new InvalidArgumentException('Environnement not found');
         }
         $this->certPath = $certPath;
         $this->certPassword = $certPassword;
@@ -44,18 +45,18 @@ class SignClient extends AbstractClient implements SignClientInterface
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-        if ($method !== null) {
+        if (null !== $method) {
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
         }
 
-        if ($this->proxy !== null) {
+        if (null !== $this->proxy) {
             curl_setopt($curl, CURLOPT_PROXY, explode(':', $this->proxy)[0]);
             curl_setopt($curl, CURLOPT_PROXYPORT, explode(':', $this->proxy)[1]);
         }
 
         $this->writeLog(self::INFO, sprintf(
             '[%s] %s',
-            $method !== null ? $method : 'GET',
+            null !== $method ? $method : 'GET',
             $this->getEndpoint() . $url
         ));
 

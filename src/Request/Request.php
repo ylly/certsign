@@ -30,7 +30,7 @@ class Request
     {
         $this->holder = $holder;
         $this->documents = $documents;
-        $this->otp = $otp !== null ? $otp : new OTP(false, '');
+        $this->otp = null !== $otp ? $otp : new OTP(false, '');
     }
 
     /**
@@ -38,14 +38,14 @@ class Request
      */
     public static function create()
     {
-        return new Request();
+        return new self();
     }
 
     /**
      * @param string $name
      * @param string $data
-     * @param Signature|null $signature
      * @param bool $raw
+     *
      * @return $this
      */
     public function addDocument($name, $data, Signature $signature = null, $raw = true)
@@ -60,6 +60,7 @@ class Request
      * @param string $lastname
      * @param string $email
      * @param string $mobile
+     *
      * @return $this
      */
     public function setHolder($firstname, $lastname, $email, $mobile)
@@ -71,6 +72,7 @@ class Request
 
     /**
      * @param $contact
+     *
      * @return $this
      */
     public function setOTP($contact)
@@ -90,6 +92,7 @@ class Request
 
     /**
      * @param string $clientId
+     *
      * @return $this
      */
     public function setClientId($clientId)

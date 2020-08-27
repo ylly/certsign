@@ -1,10 +1,11 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use YllyCertSign\Configurator;
 use YllyCertSign\Factory\SignatorFactory;
 use YllyCertSign\Signator;
 
-class ConfiguratorTest extends \PHPUnit\Framework\TestCase
+class ConfiguratorTest extends TestCase
 {
     public function testConfigureFromArray()
     {

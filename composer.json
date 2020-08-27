@@ -11,8 +11,9 @@
     ],
     "require": {
         "php": "^5.4 || ^7.0",
-        "ext-gd": "*",
         "ext-curl": "*",
+        "ext-json": "*",
+        "ext-gd": "*",
         "symfony/yaml": "^2.2 || ^3.0 || ^4.0"
     },
     "require-dev": {

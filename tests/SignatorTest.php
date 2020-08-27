@@ -1,14 +1,16 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use YllyCertSign\Client\Sign\SignTestClient;
+use YllyCertSign\Exception\WebserviceException;
 use YllyCertSign\Request\Request;
 use YllyCertSign\Request\Signature\Signature;
 use YllyCertSign\Signator;
 
-class SignatorTest extends \PHPUnit\Framework\TestCase
+class SignatorTest extends TestCase
 {
     /**
-     * @throws \YllyCertSign\Exception\WebserviceException
+     * @throws WebserviceException
      */
     public function testCreateSignOrder()
     {
@@ -30,11 +32,11 @@ class SignatorTest extends \PHPUnit\Framework\TestCase
         $signator->createRequest($request, $orderId);
         $documents = $signator->sign($orderId);
 
-        $this->assertEquals(2, count($documents));
+        $this->assertCount(2, $documents);
     }
 
     /**
-     * @throws \YllyCertSign\Exception\WebserviceException
+     * @throws WebserviceException
      */
     public function testCreateOTPSignOrder()
     {
@@ -58,6 +60,6 @@ class SignatorTest extends \PHPUnit\Framework\TestCase
         $signator->createRequest($request, $orderId);
         $documents = $signator->sign($orderId, '1234');
 
-        $this->assertEquals(2, count($documents));
+        $this->assertCount(2, $documents);
     }
 }

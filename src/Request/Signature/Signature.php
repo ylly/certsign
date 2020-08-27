@@ -35,12 +35,13 @@ class Signature
      */
     public static function create()
     {
-        return new Signature();
+        return new self();
     }
 
     /**
      * @param Image|string $image
      * @param bool $raw
+     *
      * @return $this
      */
     public function setImage($image, $raw = true)
@@ -54,6 +55,7 @@ class Signature
                 $this->image = Document::getDocumentData($image);
             }
         }
+
         return $this;
     }
 }

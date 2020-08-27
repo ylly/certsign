@@ -2,83 +2,84 @@
 
 namespace YllyCertSign\Client\Sign;
 
+use BadFunctionCallException;
 use YllyCertSign\Client\AbstractClient;
 
 class SignTestClient extends AbstractClient implements SignClientInterface
 {
     /**
      * @param string $url
+     *
      * @return object
-     * @throws \Exception
      */
     public function get($url)
     {
-        if (strpos($url, '/signatures/?id=') !== false) {
+        if (false !== strpos($url, '/signatures/?id=')) {
             return (object)[
                 'signatureRequestId' => 1,
                 'externalSignatureRequestId' => '1234_DOC1',
                 'orderRequestId' => 1234,
                 'externalOrderRequestId' => null,
                 'status' => 'SIGNED',
-                'signedContent' => ''
+                'signedContent' => '',
             ];
-        } else {
-            throw new \Exception('Call on undefined API method');
         }
+
+        throw new BadFunctionCallException('Call on undefined API method');
     }
 
     /**
      * @param string $url
      * @param array $content
-     * @return array|null|object
-     * @throws \Exception
+     *
+     * @return array|object|null
      */
     public function post($url, $content = [])
     {
-        if (strpos($url, '/orders') !== false) {
+        if (false !== strpos($url, '/orders')) {
             return (object)[
                 'orderRequestId' => 1234,
                 'externalOrderRequestId' => null,
-                'status' => 'VALIDATED'
+                'status' => 'VALIDATED',
             ];
-        } elseif (strpos($url, '/signatures?orderRequestId=') !== false) {
+        } elseif (false !== strpos($url, '/signatures?orderRequestId=')) {
             return [
                 (object)[
                     'signatureRequestId' => 1,
                     'externalSignatureRequestId' => '1234_DOC1',
                     'orderRequestId' => 1234,
                     'externalOrderRequestId' => null,
-                    'status' => 'SIGN_CREATED'
+                    'status' => 'SIGN_CREATED',
                 ],
                 (object)[
                     'signatureRequestId' => 2,
                     'externalSignatureRequestId' => '1234_DOC2',
                     'orderRequestId' => 1234,
                     'externalOrderRequestId' => null,
-                    'status' => 'SIGN_CREATED'
-                ]
+                    'status' => 'SIGN_CREATED',
+                ],
             ];
-        } elseif (strpos($url, '/signatures/validate?orderRequestId=') !== false) {
+        } elseif (false !== strpos($url, '/signatures/validate?orderRequestId=')) {
             return null;
-        } elseif (strpos($url, '/signatures/sign?mode=SYNC&orderRequestId=') !== false) {
+        } elseif (false !== strpos($url, '/signatures/sign?mode=SYNC&orderRequestId=')) {
             return [
                 (object)[
                     'signatureRequestId' => 1,
                     'externalSignatureRequestId' => '1234_DOC1',
                     'orderRequestId' => 1234,
                     'externalOrderRequestId' => null,
-                    'status' => 'SIGNED'
+                    'status' => 'SIGNED',
                 ],
                 (object)[
                     'signatureRequestId' => 2,
                     'externalSignatureRequestId' => '1234_DOC2',
                     'orderRequestId' => 1234,
                     'externalOrderRequestId' => null,
-                    'status' => 'SIGNED'
-                ]
+                    'status' => 'SIGNED',
+                ],
             ];
-        } else {
-            throw new \Exception('Call on undefined API method');
         }
+
+        throw new BadFunctionCallException('Call on undefined API method');
     }
 }

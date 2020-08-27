@@ -2,9 +2,9 @@
 
 namespace YllyCertSign;
 
+use YllyCertSign\Client\Sign\SignClientInterface;
 use YllyCertSign\Exception\OTPException;
 use YllyCertSign\Exception\WebserviceException;
-use YllyCertSign\Client\Sign\SignClientInterface;
 use YllyCertSign\Log\LogListenerInterface;
 use YllyCertSign\Request\Request;
 use YllyCertSign\Request\Signature\Document;
@@ -20,26 +20,20 @@ class Signator
      */
     private $client;
 
-    /**
-     * @param SignClientInterface $client
-     */
     public function __construct(SignClientInterface $client)
     {
         $this->client = $client;
     }
 
-    /**
-     * @param LogListenerInterface $listener
-     */
     public function addListener(LogListenerInterface $listener)
     {
         $this->client->addListener($listener);
     }
 
     /**
-     * @param Request $request
-     * @return int
      * @throws WebserviceException
+     *
+     * @return int
      */
     public function createOrder(Request $request)
     {
@@ -49,15 +43,15 @@ class Signator
             throw new WebserviceException($response->errorMsg);
         } elseif (!isset($response->orderRequestId)) {
             throw new WebserviceException();
-        } else {
-            return $response->orderRequestId;
         }
+
+        return $response->orderRequestId;
     }
 
     /**
-     * @param Request $request
      * @param int $orderId
      * @param string|null $externalIdPrefix
+     *
      * @throws WebserviceException
      */
     public function createRequest(Request $request, $orderId, $externalIdPrefix = null)
@@ -71,6 +65,7 @@ class Signator
 
     /**
      * @param int $orderId
+     *
      * @throws WebserviceException
      */
     public function validate($orderId)
@@ -85,8 +80,10 @@ class Signator
     /**
      * @param int $orderId
      * @param string|null $otp
-     * @return Document[]
+     *
      * @throws WebserviceException
+     *
+     * @return Document[]
      */
     public function sign($orderId, $otp = null)
     {
@@ -96,20 +93,19 @@ class Signator
             $otpErrors = [self::ERROR_WRONG_OTP, self::ERROR_ELAPSED_OTP, self::ERROR_KO_OTP];
             if (isset($response->errorLabel) && in_array($response->errorLabel, $otpErrors)) {
                 throw new OTPException($response->errorMsg);
-            } else {
-                throw new WebserviceException($response->errorMsg);
             }
+            throw new WebserviceException($response->errorMsg);
         } elseif (!is_array($response)) {
             throw new WebserviceException();
-        } else {
-            return $this->getSignedDocuments($response);
         }
+
+        return $this->getSignedDocuments($response);
     }
 
     /**
-     * @param Request $request
-     * @return object|array
      * @throws WebserviceException
+     *
+     * @return object|array
      */
     private function createSignOrder(Request $request)
     {
@@ -119,27 +115,28 @@ class Signator
                 'lastname' => $request->holder->lastname,
                 'email' => $request->holder->email,
                 'mobile' => $request->holder->mobile,
-                'country' => $request->holder->country
+                'country' => $request->holder->country,
             ],
             'enableOtp' => $request->otp->enabled,
             'otpContact' => $request->otp->contact,
-            'clientIdentifier' => $request->getClientId()
+            'clientIdentifier' => $request->getClientId(),
         ];
 
         $response = $this->client->post('/ephemeral/orders', $signatureOrderData);
         if (isset($response->errorMsg)) {
             throw new WebserviceException($response->errorMsg);
-        } else {
-            return $response;
         }
+
+        return $response;
     }
 
     /**
-     * @param Request $request
      * @param int $orderId
      * @param string $externalIdPrefix
-     * @return object|array
+     *
      * @throws WebserviceException
+     *
+     * @return object|array
      */
     private function createSignRequest(Request $request, $orderId, $externalIdPrefix)
     {
@@ -152,7 +149,7 @@ class Signator
                     'signatureType' => 'PAdES_BASELINE_LTA',
                     'digestAlgorithmName' => 'SHA256',
                     'signaturePackagingType' => 'ENVELOPED',
-                    'documentType' => 'INLINE'
+                    'documentType' => 'INLINE',
                 ],
                 'pdfSignatureOptions' => [
                     'signatureTextColor' => '0000',
@@ -163,9 +160,9 @@ class Signator
                     'signatureImageContent' => $document->signature->image,
                     'signaturePosX' => $document->signature->posX,
                     'signaturePosY' => $document->signature->posY,
-                    'signaturePage' => $document->signature->page
+                    'signaturePage' => $document->signature->page,
                 ],
-                'toSignContent' => $document->data
+                'toSignContent' => $document->data,
             ];
         }
 
@@ -177,13 +174,14 @@ class Signator
 
         if (isset($response->errorMsg)) {
             throw new WebserviceException($response->errorMsg);
-        } else {
-            return $response;
         }
+
+        return $response;
     }
 
     /**
      * @param int $orderId
+     *
      * @return object|array
      */
     private function validateRequest($orderId)
@@ -194,19 +192,21 @@ class Signator
     /**
      * @param int $orderId
      * @param string $otp
+     *
      * @return object|array
      */
     private function signRequest($orderId, $otp)
     {
         if (!empty($otp)) {
             return $this->client->post('/ephemeral/trigger/signatures/sign?mode=SYNC&orderRequestId=' . $orderId . '&otp=' . $otp);
-        } else {
-            return $this->client->post('/ephemeral/signatures/sign?mode=SYNC&orderRequestId=' . $orderId);
         }
+
+        return $this->client->post('/ephemeral/signatures/sign?mode=SYNC&orderRequestId=' . $orderId);
     }
 
     /**
      * @param object[] $signatures
+     *
      * @return Document[]
      */
     private function getSignedDocuments($signatures)

@@ -2,7 +2,7 @@
 
 namespace YllyCertSign\Exception;
 
-use Throwable;
+use Exception;
 
 class OTPException extends WebserviceException
 {
@@ -14,9 +14,9 @@ class OTPException extends WebserviceException
     /**
      * @param string $message
      * @param int $code
-     * @param Throwable|null $previous
+     * @param Exception $previous
      */
-    public function __construct($message = "", $code = 0, Throwable $previous = null)
+    public function __construct($message = '', $code = 0, $previous = null)
     {
         parent::__construct($message, $code, $previous);
 

@@ -1,11 +1,12 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use YllyCertSign\Request\Signature\Image\Color;
 use YllyCertSign\Request\Signature\Image\Image;
 use YllyCertSign\Request\Signature\Image\TextStyle;
 use YllyCertSign\Request\Signature\Signature;
 
-class SignatureTest extends \PHPUnit\Framework\TestCase
+class SignatureTest extends TestCase
 {
     public function testSignature()
     {

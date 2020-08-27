@@ -24,7 +24,6 @@ class TextStyle
      * @param int $y
      * @param int $fontSize
      * @param int $spacing
-     * @param Color $color
      */
     public function __construct($x, $y, $fontSize, $spacing, Color $color)
     {
@@ -101,6 +100,7 @@ class TextStyle
 
     /**
      * @param $image
+     *
      * @return int
      */
     public function getColor($image)

@@ -2,6 +2,8 @@
 
 namespace YllyCertSign\Exception;
 
-class WebserviceException extends \Exception
+use Exception;
+
+class WebserviceException extends Exception
 {
 }
