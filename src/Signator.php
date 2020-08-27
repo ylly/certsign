@@ -91,9 +91,11 @@ class Signator
 
         if (isset($response->errorMsg)) {
             $otpErrors = [self::ERROR_WRONG_OTP, self::ERROR_ELAPSED_OTP, self::ERROR_KO_OTP];
+
             if (isset($response->errorLabel) && in_array($response->errorLabel, $otpErrors)) {
                 throw new OTPException($response->errorMsg);
             }
+
             throw new WebserviceException($response->errorMsg);
         } elseif (!is_array($response)) {
             throw new WebserviceException();
@@ -208,13 +210,28 @@ class Signator
      * @param object[] $signatures
      *
      * @return Document[]
+     *
+     * @throws WebserviceException
      */
     private function getSignedDocuments($signatures)
     {
         $documents = [];
 
         foreach ($signatures as $signature) {
+            if (!isset($signature->status) || 'SIGNED' !== $signature->status || !isset($signature->signatureRequestId)) {
+                throw new WebserviceException('Invalid status');
+            }
+
             $signed = $this->client->get('/ephemeral/signatures/?id=' . $signature->signatureRequestId);
+
+            if (!isset($signed->status) || 'SIGNED' !== $signed->status || !isset($signed->externalSignatureRequestId)) {
+                throw new WebserviceException('Invalid document status');
+            }
+
+            if (!isset($signed->signedContent) || null === $signed->signedContent || '' === $signed->signedContent) {
+                throw new WebserviceException('Empty document');
+            }
+
             $name = explode('_', $signed->externalSignatureRequestId)[1];
             $doc = new Document($name, $signed->signedContent);
             $documents[] = $doc;
