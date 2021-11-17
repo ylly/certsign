@@ -2,6 +2,7 @@
 
 namespace YllyCertSign\Request;
 
+use InvalidArgumentException;
 use YllyCertSign\Request\Order\Holder;
 use YllyCertSign\Request\Order\OTP;
 use YllyCertSign\Request\Signature\Document;
@@ -65,6 +66,16 @@ class Request
      */
     public function setHolder($firstname, $lastname, $email, $mobile)
     {
+        $firstname = trim($firstname);
+        $lastname = trim($lastname);
+
+        if ('' === $firstname && '' === $lastname) {
+            throw new InvalidArgumentException('Cannot set holder without at least firstname or lastname');
+        }
+
+        $firstname = '' !== $firstname ? $firstname : $lastname;
+        $lastname = '' !== $lastname ? $lastname : $firstname;
+
         $this->holder = new Holder($firstname, $lastname, $email, $mobile);
 
         return $this;
